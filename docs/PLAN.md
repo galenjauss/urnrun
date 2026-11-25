@@ -26,12 +26,12 @@ Content (P1b) runs continuously from Day 1 to launch — it's the longest pole.
 - [x] Anthropic API key ($20/mo cap) — **optional, kept unused**; prompts are drafted in Claude Code sessions by default.
 
 **Claude:**
-- [ ] pnpm monorepo: `apps/web` (React Router v7 + Cloudflare Workers template), `packages/core`, `packages/data`.
-- [ ] TS strict, ESLint, Prettier, Vitest, Playwright, `@cloudflare/vitest-pool-workers`.
-- [ ] Wrangler config: D1, KV, DO bindings (`LobbyRoom`, `DayTally`), Cron triggers, Rate Limiting.
-- [ ] GitHub Actions: lint → typecheck → test → build → deploy preview (per PR) / prod (main).
-- [ ] Design tokens + fonts (Limelight/Marcellus SC + Jost, subset, self-hosted).
-**Exit:** "hello Urn Run" deployed at a `*.workers.dev` preview from CI.
+- [x] pnpm monorepo: `apps/web` (React Router + Cloudflare Workers template), `packages/core`. (`packages/data` lands with Phase 1b.)
+- [ ] TS strict ✅, Prettier ✅ (defaults), Vitest ✅ · ESLint config (blocked by local config-protection hook, pending) · Playwright + `@cloudflare/vitest-pool-workers` (Phase 2).
+- [ ] Wrangler config: D1 ✅, KV ✅ · DO bindings, Cron, Rate Limiting (added with their code in Phase 2/5).
+- [x] GitHub Actions: typecheck → test → build on PRs; deploy prod from `main` via `production` environment. (Per-PR previews later.)
+- [x] Design tokens + fonts (Limelight + Jost, self-hosted via Fontsource).
+**Exit:** ✅ 2026-11-25 — title screen + `/api/health` deployed to play.urnrun.workers.dev from CI.
 
 ## Phase 1 — Core engine, TDD (Day 1–3) · `packages/core`
 - [ ] Seeded RNG (sfc32) + date→day-number + UTC reset helpers.
