@@ -1,5 +1,14 @@
 import type { Tier } from "@urnrun/core";
-import { applyKick, calmJuice, kickFor, noise1, shakeOffset, stepJuice, type Juice } from "./juice";
+import {
+  applyKick,
+  calmJuice,
+  ceremonyKick,
+  kickFor,
+  noise1,
+  shakeOffset,
+  stepJuice,
+  type Juice,
+} from "./juice";
 import { paint, type LayerCtx } from "./motifs";
 import { KIND_SOUL, KIND_WEATHER, Particles, WEATHER } from "./particles";
 import { QUALITY, newMonitor, sampleFrame, type Quality, type QualityMonitor } from "./quality";
@@ -39,6 +48,7 @@ export class SceneRenderer {
   private urnPulse = 0;
   private grain: CanvasPattern | null = null;
   private kicks: (Tier | null)[] = [];
+  private ceremonies: number[] = [];
   private readonly onVisibility = () => {
     if (document.hidden) this.pause();
     else this.resume();
@@ -65,6 +75,11 @@ export class SceneRenderer {
   /** Queue a reveal beat (tier, or null for a miss). Applied on the next frame. */
   kick(tier: Tier | null): void {
     this.kicks.push(tier);
+  }
+
+  /** Ceremony beat (I–III) on arriving at the Veil, Sanctum or Hearth. */
+  ceremony(level: number): void {
+    this.ceremonies.push(level);
   }
 
   resize(): void {
@@ -123,6 +138,11 @@ export class SceneRenderer {
       this.juice = applyKick(this.juice, k, reduced);
       if (!reduced) this.camera.velocity += k.plunge / this.pxPerFt;
       this.burst(k.souls);
+    }
+
+    for (const level of this.ceremonies.splice(0)) {
+      this.juice = applyKick(this.juice, ceremonyKick(level), reduced);
+      this.burst(40 + 40 * level);
     }
 
     const { juice, sceneMs } = stepJuice(this.juice, realMs);

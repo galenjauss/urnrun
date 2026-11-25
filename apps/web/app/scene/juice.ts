@@ -75,6 +75,19 @@ export function kickFor(tier: Tier | null): Kick {
   }
 }
 
+/** Ceremonies I–III: a slow, bright bloom that grows with depth (no plunge — you have arrived). */
+export function ceremonyKick(level: number): Kick {
+  const l = Math.max(1, Math.min(3, level));
+  return {
+    ...NONE,
+    trauma: 0.15 + 0.1 * l,
+    dilateMs: 300 + 150 * l,
+    dilateScale: 0.45,
+    flash: 0.3 + 0.15 * l,
+    souls: 40 + 40 * l,
+  };
+}
+
 /** Apply a kick. Reduced motion keeps the flash and souls but drops shake, stops and plunges. */
 export function applyKick(j: Juice, k: Kick, reducedMotion: boolean): Juice {
   if (reducedMotion) return { ...j, flash: Math.min(1, j.flash + k.flash * 0.5) };

@@ -57,7 +57,12 @@ export default function Dive() {
         if ((e.target as HTMLElement).id === "guess") audio.tick(urgent);
       }}
     >
-      <Scene depth={totalSouls(slots)} urgent={urgent} pulse={pulse} />
+      <Scene
+        depth={totalSouls(slots)}
+        urgent={urgent}
+        pulse={pulse}
+        ceremony={arrival?.ceremony ? { seq: arrival.seq, level: arrival.ceremony } : null}
+      />
       <ZoneBanner arrival={phase === "ledger" ? null : arrival} />
       {phase !== "ledger" ? (
         <header className="dive-top">

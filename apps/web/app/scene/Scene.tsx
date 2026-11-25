@@ -13,6 +13,8 @@ interface SceneProps {
   depth: number;
   urgent: boolean;
   pulse: ScenePulse | null;
+  /** Ceremony beat: re-fires when `seq` changes. */
+  ceremony?: { seq: number; level: number } | null;
   /** CSS selector for the element soul particles fly into. */
   urnSelector?: string;
 }
@@ -32,7 +34,13 @@ function startQuality(): Quality {
  * The descent: a full-viewport canvas behind the DOM game layer. Purely decorative
  * (aria-hidden); if Canvas 2D is unavailable the CSS background remains.
  */
-export function Scene({ depth, urgent, pulse, urnSelector = ".urn-meter svg" }: SceneProps) {
+export function Scene({
+  depth,
+  urgent,
+  pulse,
+  ceremony = null,
+  urnSelector = ".urn-meter svg",
+}: SceneProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererRef = useRef<SceneRenderer | null>(null);
   const inputs = useRef<SceneInputs>({ depth, urgent, reducedMotion: false, urn: null });
@@ -97,6 +105,13 @@ export function Scene({ depth, urgent, pulse, urnSelector = ".urn-meter svg" }: 
     // Fire once per reveal sequence number.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seq]);
+
+  const ceremonySeq = ceremony?.seq;
+  useEffect(() => {
+    if (ceremonySeq === undefined || !ceremony) return;
+    rendererRef.current?.ceremony(ceremony.level);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ceremonySeq]);
 
   return <canvas ref={canvasRef} className="scene-canvas" aria-hidden="true" />;
 }
