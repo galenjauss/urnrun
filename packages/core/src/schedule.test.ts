@@ -106,4 +106,11 @@ describe("buildSchedule hardening", () => {
     expect(() => buildSchedule({ ...opts, prompts: dup })).toThrow(/duplicate/i);
     expect(() => buildSchedule({ ...opts, days: 0 })).toThrow(/days/);
   });
+
+  it("allows a shorter no-repeat window for small dev banks", () => {
+    const small = bank().filter((p) => Number(p.id.split("-")[1]) < 4);
+    expect(() => buildSchedule({ ...opts, prompts: small, days: 6 })).toThrow();
+    const sched = buildSchedule({ ...opts, prompts: small, days: 6, noRepeatDays: 1 });
+    expect(sched).toHaveLength(6);
+  });
 });

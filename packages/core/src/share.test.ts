@@ -42,3 +42,11 @@ describe("share hardening", () => {
     expect(buildShareText({ ...base, tiers: [...base.tiers], percentile: -3 })).toMatch(/than 0%/);
   });
 });
+
+describe("share label", () => {
+  it("says Beta before launch", () => {
+    expect(buildShareText({ ...base, tiers: [...base.tiers], day: -3 }).split("\n")[0]).toMatch(
+      /^Urn Run Beta · /,
+    );
+  });
+});

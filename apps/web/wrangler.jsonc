@@ -24,6 +24,15 @@
       "migrations_dir": "migrations",
     },
   ],
+  "triggers": { "crons": ["*/10 * * * *"] },
+  // Per-user limiter for serve/guess (anti-spam). Period must be 10 or 60 seconds.
+  "ratelimits": [
+    {
+      "name": "GUESS_LIMITER",
+      "namespace_id": "1001",
+      "simple": { "limit": 120, "period": 60 },
+    },
+  ],
   "kv_namespaces": [
     {
       "binding": "CACHE",

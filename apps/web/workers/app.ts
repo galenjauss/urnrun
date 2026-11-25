@@ -1,5 +1,6 @@
 import { createRequestHandler } from "react-router";
 import { createApi } from "./api";
+import { recomputeRarity } from "./game/rarity-job";
 
 const requestHandler = createRequestHandler(
   () => import("virtual:react-router/server-build"),
@@ -15,5 +16,12 @@ export default {
       return api.fetch(request, env, ctx);
     }
     return requestHandler(request);
+  },
+  async scheduled(_controller, env, ctx) {
+    ctx.waitUntil(
+      recomputeRarity(env.DB).catch((err: unknown) => {
+        console.error("rarity_job_failed", err instanceof Error ? err.message : err);
+      }),
+    );
   },
 } satisfies ExportedHandler<Env>;

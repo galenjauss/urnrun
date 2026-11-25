@@ -4,7 +4,12 @@ import type { Snapshot } from "./transform";
 
 export type Scalar = string | number | boolean | null;
 export type Condition =
-  Scalar | { includes: Scalar } | { in: readonly Scalar[] } | { gte: number } | { lte: number };
+  | Scalar
+  | { includes: Scalar }
+  | { contains: string }
+  | { in: readonly Scalar[] }
+  | { gte: number }
+  | { lte: number };
 
 export interface AnswerSource {
   entity: "heroes" | "abilities" | "items";
@@ -22,6 +27,9 @@ export interface ResolvedAnswer {
 function test(value: unknown, cond: Condition): boolean {
   if (cond === null || typeof cond !== "object") return value === cond;
   if ("includes" in cond) return Array.isArray(value) && value.includes(cond.includes);
+  if ("contains" in cond) {
+    return typeof value === "string" && value.toLowerCase().includes(cond.contains.toLowerCase());
+  }
   if ("in" in cond) return cond.in.includes(value as Scalar);
   if ("gte" in cond) return typeof value === "number" && value >= cond.gte;
   return typeof value === "number" && value <= cond.lte;

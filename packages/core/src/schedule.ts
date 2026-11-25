@@ -36,6 +36,8 @@ export interface ScheduleOptions {
   seed: string;
   /** Already-published days, used for the no-repeat window. */
   history?: readonly ScheduledDay[];
+  /** Override the 30-day window (dev/beta with a small bank only). */
+  noRepeatDays?: number;
 }
 
 /** |A∩B| / min(|A|,|B|) — 1 means one set is contained in the other. */
@@ -52,6 +54,7 @@ function pickForDay(
   byCategory: ReadonlyMap<Category, readonly SchedulablePrompt[]>,
   lastUsed: ReadonlyMap<string, number>,
   seed: string,
+  noRepeatDays: number,
 ): SchedulablePrompt[] {
   const rng = createRng(seedFromString(`${seed}:day:${day}`));
   const chosen: SchedulablePrompt[] = [];
@@ -61,7 +64,7 @@ function pickForDay(
     for (const prompt of pool) {
       if (picked === needed) break;
       const last = lastUsed.get(prompt.id);
-      if (last !== undefined && day - last < NO_REPEAT_DAYS) continue;
+      if (last !== undefined && day - last < noRepeatDays) continue;
       const clash = chosen.some(
         (c) => answerOverlap(c.answerIds, prompt.answerIds) > MAX_SAME_DAY_OVERLAP,
       );
@@ -84,6 +87,7 @@ export function buildSchedule({
   days,
   seed,
   history = [],
+  noRepeatDays = NO_REPEAT_DAYS,
 }: ScheduleOptions): ScheduledDay[] {
   if (!Number.isInteger(days) || days <= 0) throw new Error(`days must be a positive integer`);
   const seen = new Set<string>();
@@ -102,7 +106,7 @@ export function buildSchedule({
 
   const schedule: ScheduledDay[] = [];
   for (let day = startDay; day < startDay + days; day++) {
-    const picked = pickForDay(day, byCategory, lastUsed, seed);
+    const picked = pickForDay(day, byCategory, lastUsed, seed, noRepeatDays);
     for (const p of picked) lastUsed.set(p.id, day);
     schedule.push({ day, promptIds: picked.map((p) => p.id) });
   }

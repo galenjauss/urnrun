@@ -46,6 +46,24 @@ describe("resolveAnswerSource", () => {
     ).toEqual(["Refresher"]);
   });
 
+  it("finds heroes by ability effect", () => {
+    expect(
+      resolveAnswerSource(snap, {
+        entity: "heroes",
+        where: { abilityEffects: { includes: "stun" } },
+      }),
+    ).toEqual([{ id: "infernus", display: "Infernus" }]);
+  });
+
+  it("matches case-insensitive substrings with contains", () => {
+    expect(
+      resolveAnswerSource(snap, { entity: "items", where: { name: { contains: "MAGAZINE" } } }),
+    ).toEqual([{ id: "extended_magazine", display: "Extended Magazine" }]);
+    expect(
+      resolveAnswerSource(snap, { entity: "heroes", where: { tags: { contains: "x" } } }),
+    ).toEqual([]);
+  });
+
   it("supports numeric comparisons", () => {
     expect(
       resolveAnswerSource(snap, { entity: "items", where: { cost: { gte: 3200 } } }),

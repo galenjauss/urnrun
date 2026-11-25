@@ -37,6 +37,7 @@ describe("buildSnapshot", () => {
       [4, "Concussive Combustion"],
     ]);
     expect(snap.heroes.find((h) => h.slug === "baba")!.released).toBe(false);
+    expect(inf.abilityEffects).toEqual(["slow", "stun"]);
   });
 
   it("builds a flat ability list with hero, effects and sanitized text", () => {

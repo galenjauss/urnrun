@@ -1,19 +1,9 @@
 import { Hono } from "hono";
 import { dayNumber, nextResetAt } from "@urnrun/core";
+import { fail, ok } from "./envelope";
+import { gameRoutes } from "./routes/game";
 
-/** Consistent API envelope (SPEC §6.4). */
-export type Envelope<T> =
-  | { ok: true; data: T; error: null; meta?: Record<string, unknown> }
-  | { ok: false; data: null; error: { code: string; message: string } };
-
-export const ok = <T>(data: T, meta?: Record<string, unknown>): Envelope<T> =>
-  meta ? { ok: true, data, error: null, meta } : { ok: true, data, error: null };
-
-export const fail = (code: string, message: string): Envelope<never> => ({
-  ok: false,
-  data: null,
-  error: { code, message },
-});
+export { fail, ok, type Envelope } from "./envelope";
 
 export function createApi() {
   const api = new Hono<{ Bindings: Env }>().basePath("/api");
@@ -29,6 +19,8 @@ export function createApi() {
       }),
     );
   });
+
+  api.route("/", gameRoutes());
 
   api.notFound((c) => c.json(fail("not_found", "Unknown API route"), 404));
 

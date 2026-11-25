@@ -2,7 +2,7 @@
  "schemaVersion": 1,
  "clientVersion": 6868,
  "versionDate": "Nov 24 2026",
- "fetchedAt": "2026-11-25T21:02:03.506Z",
+ "fetchedAt": "2026-11-25T21:06:12.349Z",
  "heroes": [
   {
    "id": 6,
@@ -40,6 +40,11 @@
      "slug": "seismic_impact",
      "name": "Seismic Impact"
     }
+   ],
+   "abilityEffects": [
+    "heal",
+    "slow",
+    "stun"
    ]
   },
   {
@@ -78,6 +83,13 @@
      "slug": "itani_lo_sahn",
      "name": "Itani Lo Sahn"
     }
+   ],
+   "abilityEffects": [
+    "disarm",
+    "heal",
+    "knockup",
+    "slow",
+    "stun"
    ]
   },
   {
@@ -116,6 +128,12 @@
      "slug": "feed_the_birds",
      "name": "Feed The Birds"
     }
+   ],
+   "abilityEffects": [
+    "barrier",
+    "knockup",
+    "silence",
+    "slow"
    ]
   },
   {
@@ -154,6 +172,11 @@
      "slug": "hyper_beam",
      "name": "Hyper Beam"
     }
+   ],
+   "abilityEffects": [
+    "heal",
+    "slow",
+    "stun"
    ]
   },
   {
@@ -192,6 +215,9 @@
      "slug": "chain_gang",
      "name": "Chain Gang"
     }
+   ],
+   "abilityEffects": [
+    "slow"
    ]
   },
   {
@@ -230,6 +256,10 @@
      "slug": "return_to_shadows",
      "name": "Return to Shadows"
     }
+   ],
+   "abilityEffects": [
+    "barrier",
+    "heal"
    ]
   },
   {
@@ -268,6 +298,10 @@
      "slug": "shining_wonder",
      "name": "Shining Wonder"
     }
+   ],
+   "abilityEffects": [
+    "barrier",
+    "slow"
    ]
   },
   {
@@ -306,6 +340,12 @@
      "slug": "close_the_deal",
      "name": "Close The Deal"
     }
+   ],
+   "abilityEffects": [
+    "heal",
+    "knockup",
+    "slow",
+    "stun"
    ]
   },
   {
@@ -344,6 +384,11 @@
      "slug": "eternal_night",
      "name": "Eternal Night"
     }
+   ],
+   "abilityEffects": [
+    "heal",
+    "invisibility",
+    "slow"
    ]
   },
   {
@@ -382,6 +427,10 @@
      "slug": "singularity",
      "name": "Singularity"
     }
+   ],
+   "abilityEffects": [
+    "heal",
+    "slow"
    ]
   },
   {
@@ -420,6 +469,14 @@
      "slug": "borrowed_decree",
      "name": "Borrowed Decree"
     }
+   ],
+   "abilityEffects": [
+    "barrier",
+    "heal",
+    "immobilize",
+    "knockup",
+    "slow",
+    "stun"
    ]
   },
   {
@@ -458,6 +515,11 @@
      "slug": "guided_owl",
      "name": "Guided Owl"
     }
+   ],
+   "abilityEffects": [
+    "disarm",
+    "slow",
+    "stun"
    ]
   },
   {
@@ -496,6 +558,10 @@
      "slug": "bullet_dance",
      "name": "Bullet Dance"
     }
+   ],
+   "abilityEffects": [
+    "invisibility",
+    "slow"
    ]
   },
   {
@@ -534,6 +600,11 @@
      "slug": "spirit_lasso",
      "name": "Spirit Lasso"
     }
+   ],
+   "abilityEffects": [
+    "knockup",
+    "slow",
+    "stun"
    ]
   },
   {
@@ -572,6 +643,10 @@
      "slug": "concussive_combustion",
      "name": "Concussive Combustion"
     }
+   ],
+   "abilityEffects": [
+    "slow",
+    "stun"
    ]
   },
   {
@@ -610,6 +685,14 @@
      "slug": "air_drop",
      "name": "Air Drop"
     }
+   ],
+   "abilityEffects": [
+    "barrier",
+    "heal",
+    "knockup",
+    "silence",
+    "slow",
+    "stun"
    ]
   },
   {
@@ -648,6 +731,10 @@
      "slug": "frozen_shelter",
      "name": "Frozen Shelter"
     }
+   ],
+   "abilityEffects": [
+    "heal",
+    "slow"
    ]
   },
   {
@@ -686,6 +773,10 @@
      "slug": "soul_exchange",
      "name": "Soul Exchange"
     }
+   ],
+   "abilityEffects": [
+    "silence",
+    "slow"
    ]
   },
   {
@@ -724,6 +815,12 @@
      "slug": "death_slam",
      "name": "Death Slam"
     }
+   ],
+   "abilityEffects": [
+    "heal",
+    "knockup",
+    "slow",
+    "stun"
    ]
   },
   {
@@ -762,6 +859,11 @@
      "slug": "heavy_barrage",
      "name": "Heavy Barrage"
     }
+   ],
+   "abilityEffects": [
+    "heal",
+    "slow",
+    "stun"
    ]
   },
   {
@@ -800,6 +902,10 @@
      "slug": "nox_nostra",
      "name": "Nox Nostra"
     }
+   ],
+   "abilityEffects": [
+    "heal",
+    "slow"
    ]
   },
   {
@@ -838,6 +944,12 @@
      "slug": "traveler",
      "name": "Traveler"
     }
+   ],
+   "abilityEffects": [
+    "barrier",
+    "knockup",
+    "slow",
+    "stun"
    ]
   },
   {
@@ -876,6 +988,11 @@
      "slug": "combo",
      "name": "Combo"
     }
+   ],
+   "abilityEffects": [
+    "heal",
+    "silence",
+    "slow"
    ]
   },
   {
@@ -914,6 +1031,11 @@
      "slug": "lurking_terrors",
      "name": "Lurking Terrors"
     }
+   ],
+   "abilityEffects": [
+    "heal",
+    "knockup",
+    "slow"
    ]
   },
   {
@@ -952,6 +1074,13 @@
      "slug": "rallying_charge",
      "name": "Rallying Charge"
     }
+   ],
+   "abilityEffects": [
+    "barrier",
+    "heal",
+    "immobilize",
+    "slow",
+    "stun"
    ]
   },
   {
@@ -990,6 +1119,10 @@
      "slug": "paradoxical_swap",
      "name": "Paradoxical Swap"
     }
+   ],
+   "abilityEffects": [
+    "barrier",
+    "slow"
    ]
   },
   {
@@ -1028,6 +1161,9 @@
      "slug": "affliction",
      "name": "Affliction"
     }
+   ],
+   "abilityEffects": [
+    "slow"
    ]
   },
   {
@@ -1066,6 +1202,9 @@
      "slug": "rule_ratannia",
      "name": "Rule, Ratannia!"
     }
+   ],
+   "abilityEffects": [
+    "slow"
    ]
   },
   {
@@ -1104,6 +1243,11 @@
      "slug": "naptime",
      "name": "Naptime"
     }
+   ],
+   "abilityEffects": [
+    "barrier",
+    "heal",
+    "slow"
    ]
   },
   {
@@ -1142,6 +1286,10 @@
      "slug": "storm_cloud",
      "name": "Storm Cloud"
     }
+   ],
+   "abilityEffects": [
+    "slow",
+    "stun"
    ]
   },
   {
@@ -1180,6 +1328,9 @@
      "slug": "killing_blow",
      "name": "Killing Blow"
     }
+   ],
+   "abilityEffects": [
+    "slow"
    ]
   },
   {
@@ -1218,6 +1369,12 @@
      "slug": "lycan_curse",
      "name": "Lycan Curse"
     }
+   ],
+   "abilityEffects": [
+    "disarm",
+    "heal",
+    "immobilize",
+    "slow"
    ]
   },
   {
@@ -1256,6 +1413,9 @@
      "slug": "audience_participation",
      "name": "Audience Participation"
     }
+   ],
+   "abilityEffects": [
+    "slow"
    ]
   },
   {
@@ -1294,6 +1454,13 @@
      "slug": "develop_queen",
      "name": "Develop Queen"
     }
+   ],
+   "abilityEffects": [
+    "barrier",
+    "immobilize",
+    "knockup",
+    "slow",
+    "stun"
    ]
   },
   {
@@ -1332,6 +1499,11 @@
      "slug": "hotel_guest",
      "name": "Hotel Guest"
     }
+   ],
+   "abilityEffects": [
+    "barrier",
+    "slow",
+    "stun"
    ]
   },
   {
@@ -1370,6 +1542,12 @@
      "slug": "ira_domini",
      "name": "Ira Domini"
     }
+   ],
+   "abilityEffects": [
+    "disarm",
+    "immobilize",
+    "slow",
+    "stun"
    ]
   },
   {
@@ -1408,6 +1586,12 @@
      "slug": "shocking_reanimation",
      "name": "Shocking Reanimation"
     }
+   ],
+   "abilityEffects": [
+    "barrier",
+    "heal",
+    "slow",
+    "stun"
    ]
   },
   {
@@ -1446,6 +1630,10 @@
      "slug": "assassinate",
      "name": "Assassinate"
     }
+   ],
+   "abilityEffects": [
+    "disarm",
+    "slow"
    ]
   },
   {
@@ -1484,6 +1672,13 @@
      "slug": "abstract_landscape",
      "name": "Abstract Landscape"
     }
+   ],
+   "abilityEffects": [
+    "barrier",
+    "heal",
+    "silence",
+    "slow",
+    "stun"
    ]
   },
   {
@@ -1522,6 +1717,10 @@
      "slug": "goo_ball",
      "name": "Goo Ball"
     }
+   ],
+   "abilityEffects": [
+    "slow",
+    "stun"
    ]
   },
   {
@@ -1560,6 +1759,11 @@
      "slug": "petrifying_bola",
      "name": "Petrifying Bola"
     }
+   ],
+   "abilityEffects": [
+    "barrier",
+    "knockup",
+    "slow"
    ]
   },
   {
@@ -1598,6 +1802,12 @@
      "slug": "last_stand",
      "name": "Last Stand"
     }
+   ],
+   "abilityEffects": [
+    "barrier",
+    "immobilize",
+    "silence",
+    "slow"
    ]
   },
   {
@@ -1636,6 +1846,12 @@
      "slug": "telekinesis",
      "name": "Telekinesis"
     }
+   ],
+   "abilityEffects": [
+    "barrier",
+    "heal",
+    "knockup",
+    "slow"
    ]
   },
   {
@@ -1674,6 +1890,10 @@
      "slug": "shadow_transformation",
      "name": "Shadow Transformation"
     }
+   ],
+   "abilityEffects": [
+    "heal",
+    "slow"
    ]
   }
  ],

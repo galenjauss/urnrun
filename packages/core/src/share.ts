@@ -27,7 +27,8 @@ export function buildShareText({
         : MISS[variant === "bars" ? "bar" : "glyph"],
     )
     .join("");
-  const lines = [`Urn Run #${day} · ${formatter.format(total)} ft · ${zoneFor(total).name}`, row];
+  const label = day >= 1 ? `#${day}` : "Beta";
+  const lines = [`Urn Run ${label} · ${formatter.format(total)} ft · ${zoneFor(total).name}`, row];
   if (percentile !== null) {
     const pct = Math.min(99, Math.max(0, Math.round(percentile)));
     lines.push(`Deeper than ${pct}% of couriers today`);

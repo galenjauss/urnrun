@@ -29,6 +29,8 @@ export interface Hero {
   released: boolean;
   pickShare: number;
   abilities: HeroAbility[];
+  /** Union of effect tags across the hero's four abilities. */
+  abilityEffects: Effect[];
 }
 
 export interface Ability {
@@ -135,6 +137,9 @@ export function buildSnapshot(raw: RawPayloads, fetchedAt: string): Snapshot {
       released: !h.in_development,
       pickShare: pick.get(h.id) ?? 0,
       abilities,
+      abilityEffects: [
+        ...new Set(outAbilities.filter((a) => a.heroSlug === heroSlug).flatMap((a) => a.effects)),
+      ].sort(),
     });
   }
 
