@@ -2,6 +2,7 @@ import {
   ROUNDS_PER_DIVE,
   buildAnswerIndex,
   buildShareText,
+  shareCardPath,
   dayNumber,
   matchGuess,
   nextResetAt,
@@ -364,7 +365,13 @@ export function createGameService({ repo, secret, now, shareUrl }: GameServiceDe
         day: run.day ?? 0,
         tiers: rounds.map((r) => r.tier),
         percentile,
-        url: shareUrl,
+        url:
+          run.day !== null
+            ? `${shareUrl}${shareCardPath(
+                run.day,
+                rounds.map((r) => r.tier),
+              )}`
+            : shareUrl,
       }),
       streak,
     };
