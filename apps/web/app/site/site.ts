@@ -10,7 +10,15 @@ export const SITE = {
 } as const;
 
 /** Indexable pages (the dive itself is noindex). */
-export const CONTENT_PATHS = ["/", "/how-to-play", "/about", "/faq", "/privacy", "/terms"] as const;
+export const CONTENT_PATHS = [
+  "/",
+  "/how-to-play",
+  "/ledger",
+  "/about",
+  "/faq",
+  "/privacy",
+  "/terms",
+] as const;
 
 export const DISCLAIMER =
   "Urn Run is an unofficial fan game. It is not affiliated with, endorsed, sponsored, or approved by Valve Corporation. Deadlock and all related names are trademarks of Valve.";

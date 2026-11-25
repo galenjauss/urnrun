@@ -72,5 +72,9 @@ export interface GameRepo {
   finishRun(runId: string, total: number, zone: string, now: number): Promise<void>;
   percentileFor(day: number, total: number): Promise<{ below: number; players: number }>;
   crowdAnswers(day: number, promptId: string): Promise<CrowdAnswer[]>;
+  /** Scheduled days strictly before `before`, newest first. */
+  pastDays(before: number, limit: number): Promise<number[]>;
+  /** Finished, unflagged daily runs for a day: player count, mean and best total. */
+  dayStats(day: number): Promise<{ players: number; avgSouls: number; bestSouls: number }>;
   bumpStreak(userId: string, day: number): Promise<{ current: number; best: number }>;
 }

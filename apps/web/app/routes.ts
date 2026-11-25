@@ -8,6 +8,8 @@ export default [
   route("faq", "routes/faq.tsx"),
   route("privacy", "routes/privacy.tsx"),
   route("terms", "routes/terms.tsx"),
+  route("ledger", "routes/ledger-index.tsx"),
+  route("ledger/:day", "routes/ledger-day.tsx"),
   route("robots.txt", "routes/robots[.]txt.ts"),
   route("sitemap.xml", "routes/sitemap[.]xml.ts"),
 ] satisfies RouteConfig;
