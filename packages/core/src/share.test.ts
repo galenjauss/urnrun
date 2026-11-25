@@ -1,3 +1,4 @@
+import { decodeShareCode, encodeShareCode, shareCardPath } from "./share";
 import { describe, expect, it } from "vitest";
 import { buildShareText } from "./share";
 
@@ -51,5 +52,34 @@ describe("share label", () => {
     expect(buildShareText({ ...base, tiers: [...base.tiers], day: -3 }).split("\n")[0]).toMatch(
       /^Urn Run Beta · /,
     );
+  });
+});
+
+describe("share code", () => {
+  const tiers = [
+    "trooper",
+    "wise_guy",
+    null,
+    "guardian",
+    "walker",
+    "mid_boss",
+    "rejuvenator",
+  ] as const;
+
+  it("round-trips every tier and misses", () => {
+    const code = encodeShareCode(tiers);
+    expect(code).toBe("twxgkmr");
+    expect(decodeShareCode(code)).toEqual([...tiers]);
+  });
+
+  it("rejects wrong lengths and unknown characters", () => {
+    expect(decodeShareCode("twx")).toBeNull();
+    expect(decodeShareCode("twxgkmz")).toBeNull();
+    expect(decodeShareCode("TWXGKMR")).toBeNull();
+  });
+
+  it("builds the card path", () => {
+    expect(shareCardPath(12, tiers)).toBe("/s/12/twxgkmr");
+    expect(shareCardPath(-3, tiers)).toBe("/s/-3/twxgkmr");
   });
 });

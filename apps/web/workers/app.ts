@@ -2,6 +2,7 @@ import { RouterContextProvider, createRequestHandler } from "react-router";
 import { cloudflareContext } from "../app/cloudflare";
 import { createApi } from "./api";
 import { recomputeRarity } from "./game/rarity-job";
+import { CARD_PNG, handleCardPng } from "./og/handler";
 
 const requestHandler = createRequestHandler(
   () => import("virtual:react-router/server-build"),
@@ -16,6 +17,7 @@ export default {
     if (pathname === "/api" || pathname.startsWith("/api/")) {
       return api.fetch(request, env, ctx);
     }
+    if (CARD_PNG.test(pathname)) return handleCardPng(request, ctx);
     const context = new RouterContextProvider();
     context.set(cloudflareContext, { env, ctx });
     return requestHandler(request, context);

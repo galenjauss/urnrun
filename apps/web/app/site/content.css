@@ -262,3 +262,11 @@
     font-size: 0.95rem;
   }
 }
+
+.share-card-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 6px 0 22px;
+  border: 1px solid oklch(66% 0.09 75 / 0.4);
+}
