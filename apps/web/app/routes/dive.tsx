@@ -8,6 +8,7 @@ import { RoundTrack } from "../game/components/RoundTrack";
 import { SoundToggle } from "../game/components/SoundToggle";
 import { Timer } from "../game/components/Timer";
 import { UrnMeter } from "../game/components/UrnMeter";
+import { ZoneBanner } from "../game/components/ZoneBanner";
 import { totalSouls } from "../game/machine";
 import { useDive } from "../game/useDive";
 import { useDiveFx } from "../game/useDiveFx";
@@ -45,7 +46,7 @@ export default function Dive() {
   const inRound = phase === "preview" || phase === "answering" || phase === "reveal";
   const now = useNow(phase === "preview" || phase === "answering");
   useKeyboardInset();
-  const { pulse, urgent } = useDiveFx(state, now);
+  const { pulse, urgent, arrival } = useDiveFx(state, now);
 
   const lastSlot = lastIdx !== null ? slots[lastIdx] : undefined;
 
@@ -57,6 +58,7 @@ export default function Dive() {
       }}
     >
       <Scene depth={totalSouls(slots)} urgent={urgent} pulse={pulse} />
+      <ZoneBanner arrival={phase === "ledger" ? null : arrival} />
       {phase !== "ledger" ? (
         <header className="dive-top">
           <Link to="/" className="dive-mark" aria-label="Urn Run home">
@@ -100,7 +102,7 @@ export default function Dive() {
 
       {inRound ? (
         <footer className="dive-bottom">
-          <UrnMeter total={totalSouls(slots)} />
+          <UrnMeter total={totalSouls(slots)} slots={slots} />
           <GuessDock
             key={current?.idx ?? -1}
             enabled={phase === "answering"}

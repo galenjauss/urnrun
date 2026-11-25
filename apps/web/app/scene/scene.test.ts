@@ -122,13 +122,13 @@ describe("zone blending", () => {
     expect(blendAt(0)).toMatchObject({ from: { id: "curb" }, t: 0 });
   });
 
-  it("crossfades across each boundary", () => {
+  it("crossfades into each zone, arriving fully at its depth", () => {
     const platform = ZONES[1]!.depth;
-    expect(blendAt(platform - BLEND_FT / 2 - 1).from.id).toBe("curb");
-    const mid = blendAt(platform);
+    expect(blendAt(platform - BLEND_FT - 1)).toMatchObject({ to: { id: "curb" } });
+    const mid = blendAt(platform - BLEND_FT / 2);
     expect(mid).toMatchObject({ from: { id: "curb" }, to: { id: "platform" } });
     expect(mid.t).toBeCloseTo(0.5);
-    expect(blendAt(platform + BLEND_FT / 2).t).toBe(1);
+    expect(blendAt(platform)).toMatchObject({ to: { id: "platform" }, t: 1 });
   });
 
   it("ends in the hearth", () => {

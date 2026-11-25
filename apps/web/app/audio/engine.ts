@@ -1,4 +1,5 @@
 import type { Tier } from "@urnrun/core";
+import { bedFor, startBed } from "./ambience";
 import { jitter, loadAudioSettings, saveAudioSettings, type AudioSettings } from "./settings";
 
 /**
@@ -12,6 +13,9 @@ class AudioEngine {
   private ctx: AudioContext | null = null;
   private master: GainNode | null = null;
   private sfxBus: GainNode | null = null;
+  private musicBus: GainNode | null = null;
+  private bedZone: number | null = null;
+  private stopBed: ((fadeS?: number) => void) | null = null;
   private noiseBuf: AudioBuffer | null = null;
   settings: AudioSettings = { muted: false, sfx: 0.8, music: 0.4 };
   private listeners = new Set<(s: AudioSettings) => void>();
@@ -43,6 +47,8 @@ class AudioEngine {
       this.master.connect(comp).connect(this.ctx.destination);
       this.sfxBus = this.ctx.createGain();
       this.sfxBus.connect(this.master);
+      this.musicBus = this.ctx.createGain();
+      this.musicBus.connect(this.master);
       this.applyGains();
       const len = this.ctx.sampleRate;
       this.noiseBuf = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
@@ -50,6 +56,8 @@ class AudioEngine {
       for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
     }
     if (this.ctx.state === "suspended") void this.ctx.resume();
+    // A bed requested before the first gesture starts now.
+    if (this.bedZone !== null && !this.stopBed) this.ambience(this.bedZone);
   }
 
   update(patch: Partial<AudioSettings>): void {
@@ -71,6 +79,39 @@ class AudioEngine {
     const t = this.ctx.currentTime;
     this.master.gain.setTargetAtTime(this.settings.muted ? 0 : 1, t, 0.02);
     this.sfxBus.gain.setTargetAtTime(this.settings.sfx, t, 0.02);
+    this.musicBus?.gain.setTargetAtTime(this.settings.music, t, 0.05);
+  }
+
+  /** Crossfade the ambience bed to a zone (index into ZONES). Remembered until unlocked. */
+  ambience(zoneIndex: number): void {
+    const same = this.bedZone === zoneIndex && this.stopBed;
+    this.bedZone = zoneIndex;
+    if (same || !this.ctx || !this.musicBus || !this.noiseBuf) return;
+    this.stopBed?.(2.5);
+    this.stopBed = startBed(this.ctx, this.noiseBuf, this.musicBus, bedFor(zoneIndex));
+  }
+
+  stopAmbience(fadeS = 1.5): void {
+    this.stopBed?.(fadeS);
+    this.stopBed = null;
+    this.bedZone = null;
+  }
+
+  /** Zone arrival stinger: a struck low chord that climbs with depth, plus an air whoosh. */
+  stinger(zoneIndex: number): void {
+    const ctx = this.ready();
+    if (!ctx) return;
+    const t = ctx.currentTime + 0.02;
+    const root = 55 * Math.pow(2, (zoneIndex * 2) / 12);
+    for (const [m, a] of [
+      [1, 0.3],
+      [1.5, 0.14],
+      [2, 0.1],
+      [3, 0.04],
+    ] as const) {
+      this.tone(root * m, "sine", t, 2.4, a, { attack: 0.01 });
+    }
+    this.noise(t, 0.9, 0.06, 700, 0.5);
   }
 
   private ready(): AudioContext | null {
