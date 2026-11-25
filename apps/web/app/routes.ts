@@ -11,6 +11,7 @@ export default [
   route("ledger", "routes/ledger-index.tsx"),
   route("ledger/:day", "routes/ledger-day.tsx"),
   route("s/:day/:code", "routes/share-card.tsx"),
+  route("stats", "routes/stats.tsx"),
   route("robots.txt", "routes/robots[.]txt.ts"),
   route("sitemap.xml", "routes/sitemap[.]xml.ts"),
 ] satisfies RouteConfig;

@@ -27,6 +27,11 @@ export function SoundToggle() {
     () => getPrefs().lowPower,
     () => false,
   );
+  const streamer = useSyncExternalStore(
+    subscribePrefs,
+    () => getPrefs().streamer,
+    () => false,
+  );
   const [open, setOpen] = useState(false);
   const panelId = useId();
   const root = useRef<HTMLDivElement>(null);
@@ -114,6 +119,14 @@ export function SoundToggle() {
               onChange={(e) => setPrefs({ lowPower: e.target.checked })}
             />
             Low-power mode
+          </label>
+          <label className="settings-row">
+            <input
+              type="checkbox"
+              checked={streamer}
+              onChange={(e) => setPrefs({ streamer: e.target.checked })}
+            />
+            Streamer mode (hide answers)
           </label>
         </div>
       ) : null}
