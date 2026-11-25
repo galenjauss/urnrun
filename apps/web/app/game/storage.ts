@@ -1,0 +1,75 @@
+/** Per-device conveniences in localStorage. Every access is guarded: storage can throw or be empty. */
+
+const HOWTO_KEY = "urnrun:howto:v1";
+const STATS_KEY = "urnrun:stats:v1";
+const MAX_HISTORY = 400;
+
+export interface LocalStats {
+  played: number;
+  best: number;
+  /** day → total souls */
+  history: Record<string, number>;
+}
+
+const EMPTY: LocalStats = { played: 0, best: 0, history: {} };
+
+function read(key: string): string | null {
+  try {
+    return globalThis.localStorage?.getItem(key) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function write(key: string, value: string): void {
+  try {
+    globalThis.localStorage?.setItem(key, value);
+  } catch {
+    // Private mode / quota — conveniences only, safe to drop.
+  }
+}
+
+export const hasSeenHowTo = (): boolean => read(HOWTO_KEY) === "1";
+export const markHowToSeen = (): void => write(HOWTO_KEY, "1");
+
+function isStats(v: unknown): v is LocalStats {
+  if (!v || typeof v !== "object") return false;
+  const s = v as Record<string, unknown>;
+  return (
+    typeof s.played === "number" &&
+    typeof s.best === "number" &&
+    !!s.history &&
+    typeof s.history === "object"
+  );
+}
+
+export function loadStats(): LocalStats {
+  const raw = read(STATS_KEY);
+  if (!raw) return EMPTY;
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    return isStats(parsed) ? parsed : EMPTY;
+  } catch {
+    return EMPTY;
+  }
+}
+
+/** Pure: returns stats with this day's result folded in (a replayed day is not double counted). */
+export function withResult(stats: LocalStats, day: number, total: number): LocalStats {
+  const key = String(day);
+  const isNew = !(key in stats.history);
+  const entries = Object.entries({ ...stats.history, [key]: total })
+    .sort(([a], [b]) => Number(b) - Number(a))
+    .slice(0, MAX_HISTORY);
+  return {
+    played: stats.played + (isNew ? 1 : 0),
+    best: Math.max(stats.best, total),
+    history: Object.fromEntries(entries),
+  };
+}
+
+export function recordResult(day: number, total: number): LocalStats {
+  const next = withResult(loadStats(), day, total);
+  write(STATS_KEY, JSON.stringify(next));
+  return next;
+}
