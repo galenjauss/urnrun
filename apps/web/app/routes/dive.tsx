@@ -5,12 +5,16 @@ import { Ledger } from "../game/components/Ledger";
 import { PromptCard } from "../game/components/PromptCard";
 import { RevealStamp } from "../game/components/RevealStamp";
 import { RoundTrack } from "../game/components/RoundTrack";
+import { SoundToggle } from "../game/components/SoundToggle";
 import { Timer } from "../game/components/Timer";
 import { UrnMeter } from "../game/components/UrnMeter";
 import { totalSouls } from "../game/machine";
 import { useDive } from "../game/useDive";
+import { useDiveFx } from "../game/useDiveFx";
 import { useKeyboardInset } from "../game/useKeyboardInset";
 import { useNow } from "../game/useNow";
+import { audio } from "../audio/engine";
+import { Scene } from "../scene/Scene";
 import type { Route } from "./+types/dive";
 import "./dive.css";
 
@@ -41,17 +45,25 @@ export default function Dive() {
   const inRound = phase === "preview" || phase === "answering" || phase === "reveal";
   const now = useNow(phase === "preview" || phase === "answering");
   useKeyboardInset();
+  const { pulse, urgent } = useDiveFx(state, now);
 
   const lastSlot = lastIdx !== null ? slots[lastIdx] : undefined;
 
   return (
-    <main className={`dive phase-${phase}`}>
+    <main
+      className={`dive phase-${phase}${urgent ? " is-urgent" : ""}`}
+      onInput={(e) => {
+        if ((e.target as HTMLElement).id === "guess") audio.tick(urgent);
+      }}
+    >
+      <Scene depth={totalSouls(slots)} urgent={urgent} pulse={pulse} />
       {phase !== "ledger" ? (
         <header className="dive-top">
           <Link to="/" className="dive-mark" aria-label="Urn Run home">
             Urn Run
           </Link>
           <RoundTrack slots={slots} currentIdx={current?.idx ?? null} />
+          <SoundToggle />
         </header>
       ) : null}
 
