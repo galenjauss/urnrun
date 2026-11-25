@@ -59,26 +59,26 @@ Content (P1b) runs continuously from Day 1 to launch — it's the longest pole.
 **Exit:** ≥ 210 approved prompts, 60-day schedule in D1, all sigils approved.
 
 ## Phase 2 — Vertical slice (Day 3–5)
-- [ ] Worker API: `/api/today`, run lifecycle (`run`, `serve`, `guess`, `finish`), HMAC run tokens,
+- [x] Worker API: `/api/today`, run lifecycle (`run`, `serve`, `guess`, `finish`), HMAC run tokens,
       server-side timing, rate limits, envelope responses, input validation (zod).
-- [ ] D1 migrations (schema in SPEC §6.3); `DayTally` DO with 60 s flush; rarity cron (10 min).
-- [ ] Client game state machine (`title → howto → preview → answering → reveal → ceremony → ledger`)
+- [x] D1 migrations (schema in SPEC §6.3); rarity cron (10 min). *(`DayTally` DO moves to P5 with lobbies; D1 handles tallies at current scale.)*
+- [x] Client game state machine (`title → howto → preview → answering → reveal → ceremony → ledger`)
       with placeholder visuals; mobile input docking (VisualViewport); keyboard flow.
-- [ ] Ledger with crowd reveal + percentile; share string; local stats/streak.
-**Exit:** Galen can play a full scored Daily on his phone against real prompts on the preview URL.
+- [x] Ledger with crowd reveal + percentile; share string; local stats/streak.
+**Exit:** ✅ 2026-11-25 — full scored Daily playable at play.urnrun.workers.dev/dive (verified 320–1440 px, live smoke).
 **🔎 Galen playtest #1** — feel of timer, matching generosity, prompt quality.
 
 ## Phase 3 — Scene, juice & audio (Day 5–11) · the "AAA feel" phase
-- [ ] Canvas renderer core: layer stack, parallax, spring camera, particles, additive glow, grain/vignette,
+- [x] Canvas renderer core: layer stack, parallax, spring camera, particles, additive glow, grain/vignette,
       quality auto-tiering, low-power mode, reduced-motion path.
-- [ ] Urn: liquid-light fill with spring surface, gem slots, Wise Guy smoke cough, overflow.
-- [ ] 10 zones (SPEC §3.4) — order of build: Curb, Platform, Tunnels, Cellar, Vault (MVP five) → Sewers,
+- [x] Urn: liquid-light fill with spring surface, gem slots, Wise Guy smoke cough, overflow.
+- [x] 10 zones (SPEC §3.4) — procedural motifs + weather + crossfades for all ten; painted art is a later upgrade — order of build: Curb, Platform, Tunnels, Cellar, Vault (MVP five) → Sewers,
       Catacombs, Veil, Sanctum, Hearth.
-- [ ] Tier reveal choreography × 6; hit-stop; shake; chain counter; timer last-5 s tension.
-- [ ] Ceremonies I–III + constellation results card.
-- [ ] Audio: synth tier voices, typing/UI SFX, heartbeat, zone ambience beds (CC0 + synth),
-      music theme with depth-layered stems, mixer + settings.
-- [ ] Title screen: rain street scene, Urn on the curb, countdown, Mod-of-the-Week card slot.
+- [x] Tier reveal choreography × 6; hit-stop; shake; chain counter; timer last-5 s tension.
+- [x] Ceremonies I–III + constellation results card.
+- [ ] Audio: ✅ synth tier voices, typing/UI SFX, heartbeat, zone ambience beds (synth), mixer + settings
+      (mute, music/SFX, low-power) · ⏳ music theme with depth-layered stems.
+- [ ] Title screen: ✅ rain street scene, Urn, countdown · ⏳ Mod-of-the-Week card slot.
 **Exit:** visual regression baselines captured; 60 fps on mid devices. **🔎 Galen playtest #2** (feel pass).
 
 ## Phase 4 — Modes, accounts & social (Day 6–11)

@@ -2,7 +2,7 @@ import type { Slot } from "../machine";
 import { tierView } from "../tiers";
 
 /** The tier stamp that slams down after each round. */
-export function RevealStamp({ slot }: { slot: Slot }) {
+export function RevealStamp({ slot, chain = 0 }: { slot: Slot; chain?: number }) {
   const view = tierView(slot.tier);
   const missed = slot.status === "expired";
   return (
@@ -14,6 +14,11 @@ export function RevealStamp({ slot }: { slot: Slot }) {
         <span className="stamp-label">{missed ? "Time's up" : view.label}</span>
       </div>
       {slot.answer ? <p className="reveal-answer">{slot.answer}</p> : null}
+      {chain >= 2 ? (
+        <p className="reveal-chain" key={chain}>
+          Chain ×{chain}
+        </p>
+      ) : null}
       <p className="reveal-souls">{missed ? "No souls this round" : `+${view.souls} souls`}</p>
     </div>
   );

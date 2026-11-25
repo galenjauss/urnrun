@@ -24,6 +24,8 @@ export interface SceneInputs {
   reducedMotion: boolean;
   /** Screen-space point (CSS px) the soul particles fly into — the Urn. */
   urn: { x: number; y: number } | null;
+  /** Player's low-power choice: pins the lowest quality tier (fewer particles, 30 fps). */
+  lowPower?: boolean;
 }
 
 const PARALLAX = [0.22, 0.55, 1] as const;
@@ -49,6 +51,7 @@ export class SceneRenderer {
   private grain: CanvasPattern | null = null;
   private kicks: (Tier | null)[] = [];
   private ceremonies: number[] = [];
+  private drawnTier: Quality = 2;
   private readonly onVisibility = () => {
     if (document.hidden) this.pause();
     else this.resume();
@@ -63,13 +66,15 @@ export class SceneRenderer {
     this.camera = { value: inputs.depth, velocity: 0 };
     this.monitor = newMonitor(startQuality);
     this.particles = new Particles(QUALITY[2].particles);
+    this.drawnTier = this.quality;
     this.resize();
     this.grain = this.makeGrain();
     document.addEventListener("visibilitychange", this.onVisibility);
   }
 
+  /** Effective tier: the auto-tiered quality, pinned to low when the player asks for it. */
   get quality(): Quality {
-    return this.monitor.tier;
+    return this.inputs.lowPower ? 0 : this.monitor.tier;
   }
 
   /** Queue a reveal beat (tier, or null for a miss). Applied on the next frame. */
@@ -83,7 +88,7 @@ export class SceneRenderer {
   }
 
   resize(): void {
-    const cfg = QUALITY[this.monitor.tier];
+    const cfg = QUALITY[this.quality];
     const rect = this.canvas.getBoundingClientRect();
     this.w = Math.max(1, rect.width);
     this.h = Math.max(1, rect.height);
@@ -123,14 +128,16 @@ export class SceneRenderer {
 
   private frame(now: number): void {
     const realMs = Math.min(MAX_FRAME_MS, now - this.last);
-    const cfg = QUALITY[this.monitor.tier];
+    const cfg = QUALITY[this.quality];
     // Frame cap (low-power tier runs at 30 fps). Small tolerance so 60 Hz displays don't skip.
     if (realMs < 1000 / cfg.fpsCap - 2) return;
     this.last = now;
 
-    const prevTier = this.monitor.tier;
     this.monitor = sampleFrame(this.monitor, realMs);
-    if (this.monitor.tier !== prevTier) this.resize();
+    if (this.quality !== this.drawnTier) {
+      this.drawnTier = this.quality;
+      this.resize();
+    }
 
     const reduced = this.inputs.reducedMotion;
     for (const tier of this.kicks.splice(0)) {
@@ -179,8 +186,8 @@ export class SceneRenderer {
   }
 
   private burst(n: number): void {
-    const limit = QUALITY[this.monitor.tier].particles;
-    const scale = [0.5, 0.8, 1][this.monitor.tier]!;
+    const limit = QUALITY[this.quality].particles;
+    const scale = [0.5, 0.8, 1][this.quality]!;
     const cx = this.w / 2;
     const cy = this.h * 0.26;
     for (let i = 0; i < Math.round(n * scale); i++) {

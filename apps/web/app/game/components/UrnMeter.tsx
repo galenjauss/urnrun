@@ -7,6 +7,8 @@ import { formatFt, tierView } from "../tiers";
 interface UrnMeterProps {
   total: number;
   slots?: readonly Slot[];
+  /** Wise Guy reveal sequence: the Urn coughs a puff of smoke each time it changes. */
+  coughSeq?: number | null;
 }
 
 const URN_PATH =
@@ -31,7 +33,7 @@ function surfacePath(level: number, amp: number, t: number): string {
  * surface sloshes with the spring's velocity (calm idle ripple otherwise). Seven gem slots on the
  * band show each round's tier — "your crown for the day".
  */
-export function UrnMeter({ total, slots = [] }: UrnMeterProps) {
+export function UrnMeter({ total, slots = [], coughSeq = null }: UrnMeterProps) {
   // Square-root curve: early souls visibly fill the Urn; a perfect dive still tops it off.
   const target = Math.sqrt(Math.min(1, Math.max(0, total) / MAX_SOULS));
   const liquidRef = useRef<SVGPathElement>(null);
@@ -70,7 +72,17 @@ export function UrnMeter({ total, slots = [] }: UrnMeterProps) {
 
   const zone = zoneFor(total).name;
   return (
-    <figure className="urn-meter" aria-label={`Depth ${formatFt(total)}, ${zone}`}>
+    <figure
+      className={`urn-meter${total >= MAX_SOULS ? " is-overflowing" : ""}`}
+      aria-label={`Depth ${formatFt(total)}, ${zone}`}
+    >
+      {coughSeq !== null ? (
+        <span key={coughSeq} className="urn-smoke" aria-hidden="true">
+          <i />
+          <i />
+          <i />
+        </span>
+      ) : null}
       <svg viewBox="0 0 64 80" aria-hidden="true">
         <defs>
           <clipPath id="urn-body">
