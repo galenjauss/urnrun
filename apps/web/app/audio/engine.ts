@@ -253,6 +253,19 @@ class AudioEngine {
     }
   }
 
+  /** Ceremony I–III: the zone stinger under a rising chime bloom that lengthens with depth. */
+  ceremony(level: number, zoneIndex: number): void {
+    const ctx = this.ready();
+    if (!ctx) return;
+    this.stinger(zoneIndex);
+    const t = ctx.currentTime + 0.25;
+    const notes = [523.25, 659.25, 783.99, 1046.5, 1318.5, 1568, 2093];
+    notes.slice(0, 3 + level).forEach((f, i) => {
+      this.tone(f, "sine", t + i * 0.11, 1.4 + level * 0.3, 0.06);
+      this.tone(f * 2, "sine", t + i * 0.11, 0.6, 0.015);
+    });
+  }
+
   /** Typing tick: short filtered noise, ±6% pitch; tenser (higher) in the last seconds. */
   tick(urgent = false): void {
     const ctx = this.ready();

@@ -30,8 +30,8 @@ export function buildShareText({
   const label = day >= 1 ? `#${day}` : "Beta";
   const lines = [`Urn Run ${label} · ${formatter.format(total)} ft · ${zoneFor(total).name}`, row];
   if (percentile !== null) {
-    const pct = Math.min(99, Math.max(0, Math.round(percentile)));
-    lines.push(`Deeper than ${pct}% of couriers today`);
+    const pct = Math.min(100, Math.max(0, Math.round(percentile)));
+    lines.push(pct >= 100 ? "Deepest dive today" : `Deeper than ${pct}% of couriers today`);
   }
   lines.push(url);
   return lines.join("\n");

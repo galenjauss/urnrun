@@ -107,3 +107,13 @@
     transform: scale(1.06);
   }
 }
+
+/* The rain-street scene canvas sits behind the title card (shared with the dive). */
+.title-screen .scene-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}

@@ -36,8 +36,11 @@ describe("share hardening", () => {
     expect(buildShareText({ ...base, tiers: [...base.tiers], percentile: 87.333 })).toMatch(
       /than 87%/,
     );
-    expect(buildShareText({ ...base, tiers: [...base.tiers], percentile: 140 })).toMatch(
+    expect(buildShareText({ ...base, tiers: [...base.tiers], percentile: 99.4 })).toMatch(
       /than 99%/,
+    );
+    expect(buildShareText({ ...base, tiers: [...base.tiers], percentile: 140 })).toMatch(
+      /Deepest dive today/,
     );
     expect(buildShareText({ ...base, tiers: [...base.tiers], percentile: -3 })).toMatch(/than 0%/);
   });

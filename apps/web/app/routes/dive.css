@@ -110,6 +110,15 @@
   background: linear-gradient(90deg, transparent, oklch(13% 0.01 250 / 0.88) 18% 82%, transparent);
   animation: zone-banner 2600ms var(--ease-out-expo) both;
 }
+.zone-banner.is-ceremony {
+  padding: 14px 36px;
+  animation-duration: 3800ms;
+}
+.zone-banner.is-ceremony .zone-banner-name {
+  font-size: clamp(2rem, 9vw, 3rem);
+  color: var(--soul-400);
+  text-shadow: 0 0 26px oklch(84% 0.13 175 / 0.6);
+}
 .zone-banner-kicker {
   font-size: 0.68rem;
   letter-spacing: 0.32em;
@@ -757,5 +766,85 @@
 @keyframes pulse {
   50% {
     opacity: 0.55;
+  }
+}
+
+/* ── Constellation ───────────────────────────────────── */
+.constellation {
+  margin: 0;
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+}
+.constellation svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.constellation figcaption {
+  font-size: 0.7rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--brass-500);
+}
+.constellation-frame {
+  fill: oklch(13% 0.01 250 / 0.75);
+  stroke: oklch(66% 0.09 75 / 0.45);
+  stroke-width: 1;
+}
+.constellation-rule {
+  stroke: oklch(66% 0.09 75 / 0.12);
+  stroke-dasharray: 2 6;
+}
+.constellation-link {
+  stroke: oklch(94% 0.03 85 / 0.28);
+  stroke-width: 1;
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  animation: draw-link 900ms calc(140ms * var(--i, 0) + 900ms) var(--ease-out-expo) forwards;
+}
+.constellation-link.is-chain {
+  stroke: var(--soul-400);
+  stroke-width: 1.6;
+}
+.constellation-star {
+  color: var(--tone);
+  fill: var(--tone);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: star-in 520ms calc(140ms * var(--i, 0) + 500ms) var(--ease-out-expo) both;
+}
+.constellation-star.is-unlit {
+  fill: oklch(45% 0.01 250 / 0.6);
+}
+@keyframes draw-link {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes star-in {
+  from {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+}
+.row-glyph {
+  display: inline-block;
+  animation: glyph-stamp 420ms calc(120ms * var(--i, 0) + 420ms) var(--ease-out-expo) both;
+}
+@keyframes glyph-stamp {
+  from {
+    opacity: 0;
+    transform: scale(1.8) rotate(-12deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .constellation-link {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  .constellation-star,
+  .row-glyph {
+    animation: none;
   }
 }

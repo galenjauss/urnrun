@@ -7,6 +7,8 @@ import { totalSouls, type DiveState } from "./machine";
 export interface Arrival {
   seq: number;
   name: string;
+  /** Ceremony I–III for the Veil, Sanctum and Patron's Hearth. */
+  ceremony: number | null;
 }
 
 /** Small beat after the reveal clears before the arrival lands. */
@@ -79,9 +81,12 @@ export function useDiveFx(
     if (pendingZone === null || revealing) return;
     const timer = setTimeout(() => {
       arrivalSeq.current += 1;
-      setArrival({ seq: arrivalSeq.current, name: ZONES[pendingZone]!.name });
+      const zone = ZONES[pendingZone]!;
+      const ceremony = zone.ceremony ?? null;
+      setArrival({ seq: arrivalSeq.current, name: zone.name, ceremony });
       setPendingZone(null);
-      audio.stinger(pendingZone);
+      if (ceremony) audio.ceremony(ceremony, pendingZone);
+      else audio.stinger(pendingZone);
     }, ARRIVAL_DELAY_MS);
     return () => clearTimeout(timer);
   }, [pendingZone, revealing]);

@@ -2,6 +2,8 @@ import { nextResetAt } from "@urnrun/core";
 import { useState } from "react";
 import type { FinishResult } from "../api";
 import { useNow } from "../useNow";
+import { useRollUp } from "../useRollUp";
+import { Constellation } from "./Constellation";
 import { formatFt, tierView } from "../tiers";
 
 function Countdown() {
@@ -45,19 +47,23 @@ function ShareButton({ text }: { text: string }) {
 
 function percentileLine(r: FinishResult): string {
   if (r.percentile === null) return "The first courier down today.";
-  return `Deeper than ${r.percentile}% of ${r.players.toLocaleString("en-US")} couriers today.`;
+  const players = r.players.toLocaleString("en-US");
+  // Same wording as the share text (core buildShareText) so the two never disagree.
+  if (r.percentile >= 100) return `Deepest dive today, of ${players} couriers.`;
+  return `Deeper than ${r.percentile}% of ${players} couriers today.`;
 }
 
 /** THE LEDGER — results, per-round crowd reveal, share. */
 export function Ledger({ result }: { result: FinishResult }) {
+  const depth = useRollUp(result.totalSouls);
   return (
     <section className="ledger" aria-labelledby="ledger-title">
       <header className="ledger-head">
         <p className="ledger-kicker">
           The Ledger{result.day !== null && result.day >= 1 ? ` · #${result.day}` : " · Beta"}
         </p>
-        <h2 id="ledger-title" className="ledger-depth">
-          {formatFt(result.totalSouls)}
+        <h2 id="ledger-title" className="ledger-depth" aria-label={formatFt(result.totalSouls)}>
+          <span aria-hidden="true">{formatFt(depth)}</span>
         </h2>
         <p className="ledger-zone">{result.zone}</p>
         <p className="ledger-verdict">{result.verdict}</p>
@@ -68,6 +74,8 @@ export function Ledger({ result }: { result: FinishResult }) {
           </p>
         ) : null}
       </header>
+
+      <Constellation result={result} />
 
       <ol className="ledger-rounds">
         {result.rounds.map((r, i) => {

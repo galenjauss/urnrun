@@ -1,6 +1,14 @@
 import { ZONES } from "@urnrun/core";
 import { describe, expect, it } from "vitest";
-import { applyKick, calmJuice, kickFor, noise1, shakeOffset, stepJuice } from "./juice";
+import {
+  applyKick,
+  calmJuice,
+  ceremonyKick,
+  kickFor,
+  noise1,
+  shakeOffset,
+  stepJuice,
+} from "./juice";
 import { newMonitor, sampleFrame, type QualityMonitor } from "./quality";
 import { stepSpring, springSettled } from "./spring";
 import { BLEND_FT, LOOKS, blendAt } from "./zones";
@@ -69,6 +77,14 @@ describe("juice", () => {
     expect(j.hitStopMs).toBe(0);
     expect(j.dilateMs).toBe(0);
     expect(j.flash).toBeGreaterThan(0);
+  });
+
+  it("grows ceremonies I–III without plunging", () => {
+    const [a, b, c] = [1, 2, 3].map(ceremonyKick);
+    expect(a!.plunge + b!.plunge + c!.plunge).toBe(0);
+    expect(c!.souls).toBeGreaterThan(b!.souls);
+    expect(b!.flash).toBeGreaterThan(a!.flash);
+    expect(ceremonyKick(9)).toEqual(c);
   });
 
   it("decays trauma and caps it at 1", () => {

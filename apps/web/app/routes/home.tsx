@@ -1,5 +1,6 @@
 import { dayNumber, dayStart } from "@urnrun/core";
 import { Link } from "react-router";
+import { Scene } from "../scene/Scene";
 
 import type { Route } from "./+types/home";
 import "./home.css";
@@ -62,6 +63,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
   const { daysUntilLaunch } = loaderData;
   return (
     <main className="title-screen">
+      <Scene depth={0} urgent={false} pulse={null} urnSelector=".sunburst" />
       <section className="title-card" aria-labelledby="wordmark">
         <Sunburst />
         <h1 id="wordmark" className="wordmark">
