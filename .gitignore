@@ -1,0 +1,13 @@
+node_modules/
+dist/
+build/
+.wrangler/
+.dev.vars
+.env*
+!.env.example
+coverage/
+playwright-report/
+test-results/
+.DS_Store
+# answer data lives in the private urnrun-content repo
+content/
