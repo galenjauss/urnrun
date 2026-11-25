@@ -1,4 +1,5 @@
 import { dayNumber, dayStart } from "@urnrun/core";
+import { Link } from "react-router";
 
 import type { Route } from "./+types/home";
 import "./home.css";
@@ -73,6 +74,9 @@ export default function Home({ loaderData }: Route.ComponentProps) {
             ? `First dive in ${daysUntilLaunch} day${daysUntilLaunch === 1 ? "" : "s"}`
             : "The first dive is open"}
         </p>
+        <Link className="cta title-cta" to="/dive">
+          {daysUntilLaunch > 0 ? "Beta dive" : "Pick up the Urn"}
+        </Link>
       </section>
     </main>
   );
