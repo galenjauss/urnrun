@@ -249,6 +249,21 @@ export function createD1Repo(db: D1Database, clock: () => number = Date.now): Ga
       return { below: row?.below ?? 0, players: row?.players ?? 0 };
     },
 
+    async activePrompts() {
+      const { results } = await db
+        .prepare("SELECT id, category FROM prompts WHERE active = 1")
+        .all<{ id: string; category: string }>();
+      return results;
+    },
+
+    async scheduledPromptIdsBetween(from, to) {
+      const { results } = await db
+        .prepare("SELECT prompt_ids_json FROM daily_schedule WHERE day BETWEEN ? AND ?")
+        .bind(from, to)
+        .all<{ prompt_ids_json: string }>();
+      return results.flatMap((r) => JSON.parse(r.prompt_ids_json) as string[]);
+    },
+
     async pastDays(before, limit) {
       const { results } = await db
         .prepare(`SELECT day FROM daily_schedule WHERE day < ? ORDER BY day DESC LIMIT ?`)

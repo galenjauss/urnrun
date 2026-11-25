@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useLocation, useSearchParams } from "react-router";
 import { GuessDock } from "../game/components/GuessDock";
 import { HowTo } from "../game/components/HowTo";
 import { Ledger } from "../game/components/Ledger";
@@ -11,7 +11,7 @@ import { UrnMeter } from "../game/components/UrnMeter";
 import { ZoneBanner } from "../game/components/ZoneBanner";
 import { chainAt } from "../game/chain";
 import { totalSouls } from "../game/machine";
-import { useDive } from "../game/useDive";
+import { useDive, type DiveMode } from "../game/useDive";
 import { useDiveFx } from "../game/useDiveFx";
 import { useKeyboardInset } from "../game/useKeyboardInset";
 import { useNow } from "../game/useNow";
@@ -42,7 +42,15 @@ function Status({ title, body, onRetry }: { title: string; body?: string; onRetr
 }
 
 export default function Dive() {
-  const { state, notice, submit, dismissHowTo, retry } = useDive();
+  const [params] = useSearchParams();
+  const location = useLocation();
+  const mode: DiveMode = params.get("mode") === "free" ? "free" : "daily";
+  // Re-keyed per navigation so "Dive again" starts a fresh run.
+  return <DiveGame key={location.key} mode={mode} />;
+}
+
+function DiveGame({ mode }: { mode: DiveMode }) {
+  const { state, notice, submit, dismissHowTo, retry } = useDive(undefined, mode);
   const { phase, current, slots, feedback, pending, ledger, lastIdx, error } = state;
   const inRound = phase === "preview" || phase === "answering" || phase === "reveal";
   const now = useNow(phase === "preview" || phase === "answering");

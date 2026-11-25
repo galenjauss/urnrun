@@ -87,6 +87,14 @@ export class FakeRepo implements GameRepo {
     const done = [...this.runs.values()].filter((r) => r.day === day && r.finishedAt !== null);
     return { below: done.filter((r) => r.totalSouls < total).length, players: done.length };
   }
+  async activePrompts() {
+    return [...this.prompts.values()].map((p) => ({ id: p.id, category: p.category }));
+  }
+  async scheduledPromptIdsBetween(from: number, to: number) {
+    return [...this.schedule.entries()]
+      .filter(([d]) => d >= from && d <= to)
+      .flatMap(([, ids]) => ids);
+  }
   async pastDays(before: number, limit: number) {
     return [...this.schedule.keys()]
       .filter((d) => d < before)

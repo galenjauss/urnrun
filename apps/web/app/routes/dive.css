@@ -953,3 +953,20 @@
   width: 100%;
   accent-color: var(--gold-400);
 }
+
+/* ── Ledger: next dive ───────────────────────────────── */
+.ledger-next {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.ledger-next p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: oklch(94% 0.03 85 / 0.6);
+}
+.ledger-free-best {
+  color: var(--soul-400) !important;
+  font-weight: 600;
+}

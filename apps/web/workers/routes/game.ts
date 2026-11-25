@@ -17,7 +17,7 @@ const GuessBody = z.object({
     .max(MAX_GUESS_LENGTH * 2),
   confirm: z.string().min(1).max(64).optional(),
 });
-const StartBody = z.object({ mode: z.literal("daily") });
+const StartBody = z.object({ mode: z.enum(["daily", "free"]).default("daily") });
 
 function token(c: Context<AppEnv>): string {
   const t = c.req.header("x-run-token");
@@ -61,8 +61,12 @@ export function gameRoutes() {
   app.get("/today", async (c) => c.json(ok(await c.get("game").today(c.get("userId")))));
 
   app.post("/run", async (c) => {
-    StartBody.parse(await c.req.json().catch(() => ({})));
-    return c.json(ok(await c.get("game").startDaily(c.get("userId"))));
+    const { mode } = StartBody.parse(await c.req.json().catch(() => ({})));
+    const game = c.get("game");
+    const userId = c.get("userId");
+    return c.json(
+      ok(mode === "free" ? await game.startFree(userId) : await game.startDaily(userId)),
+    );
   });
 
   app.post("/run/:id/round/:idx/serve", async (c) => {
