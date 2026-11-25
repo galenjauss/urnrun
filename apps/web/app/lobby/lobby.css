@@ -239,3 +239,11 @@ body:has(.lobby-shell) {
 .lobby-card a {
   color: var(--soul-400);
 }
+.lobby-code.is-hidden {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: none;
+  cursor: pointer;
+}

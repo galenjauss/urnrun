@@ -79,6 +79,8 @@ export function lobbyRoutes() {
     const headers = new Headers(c.req.raw.headers);
     headers.set("x-urn-player", await playerId(c, code));
     headers.set("x-urn-name", cleanName(c.req.query("name")));
+    if (c.req.query("spectate") === "1") headers.set("x-urn-spectate", "1");
+    else headers.delete("x-urn-spectate");
     return stub(c.env, code).fetch(new Request("https://lobby/ws", { headers }));
   });
 

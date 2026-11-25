@@ -35,7 +35,7 @@ export function saveName(name: string): void {
 }
 
 /** One séance socket with automatic reconnect (exponential backoff, capped) and clock sync. */
-export function useLobby(code: string, name: string | null): LobbyHook {
+export function useLobby(code: string, name: string | null, spectate = false): LobbyHook {
   const [view, setView] = useState<PublicLobby | null>(null);
   const [you, setYou] = useState<string | null>(null);
   const [conn, setConn] = useState<LobbyConn>("connecting");
@@ -54,7 +54,9 @@ export function useLobby(code: string, name: string | null): LobbyHook {
     const connect = () => {
       const proto = location.protocol === "https:" ? "wss" : "ws";
       const ws = new WebSocket(
-        `${proto}://${location.host}/api/lobby/${code}/ws?name=${encodeURIComponent(name)}`,
+        `${proto}://${location.host}/api/lobby/${code}/ws?name=${encodeURIComponent(name)}${
+          spectate ? "&spectate=1" : ""
+        }`,
       );
       wsRef.current = ws;
       ws.onopen = () => {
@@ -104,7 +106,7 @@ export function useLobby(code: string, name: string | null): LobbyHook {
       clearInterval(ping);
       wsRef.current?.close();
     };
-  }, [code, name]);
+  }, [code, name, spectate]);
 
   const send = useCallback((msg: Record<string, unknown>) => {
     const ws = wsRef.current;
