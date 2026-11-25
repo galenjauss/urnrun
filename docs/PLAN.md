@@ -92,9 +92,9 @@ Content (P1b) runs continuously from Day 1 to launch — it's the longest pole.
 **Exit:** E2E specs green for daily/free/archive/share/login-merge.
 
 ## Phase 5 — Live lobbies (Day 6–11)
-- [ ] `LobbyRoom` DO (WebSocket Hibernation): join/start/guess/reveal/podium, server clocks, clock-offset sync,
+- [x] `LobbyRoom` DO (WebSocket Hibernation): join/start/guess/reveal/podium, server clocks, clock-offset sync,
       reconnection, host migration, 16-player cap, GC.
-- [ ] **Séance** mode (P0): room uniqueness bonus, jinx animation, podium ceremony, rematch.
+- [x] **Séance** mode (P0): room uniqueness bonus, jinx animation, podium ceremony, rematch.
 - [ ] **Hot Urn** mode (P1): fuse, lives, rare-answer life meter.
 - [ ] OBS overlay route `/overlay/:room`.
 **Exit:** 8-client load test (Playwright multi-context) stable; latency-tolerant at 300 ms RTT.

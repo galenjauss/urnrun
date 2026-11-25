@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { dayNumber, nextResetAt } from "@urnrun/core";
 import { fail, ok } from "./envelope";
 import { gameRoutes } from "./routes/game";
+import { lobbyRoutes } from "./routes/lobby";
 
 export { fail, ok, type Envelope } from "./envelope";
 
@@ -21,6 +22,7 @@ export function createApi() {
   });
 
   api.route("/", gameRoutes());
+  api.route("/", lobbyRoutes());
 
   api.notFound((c) => c.json(fail("not_found", "Unknown API route"), 404));
 

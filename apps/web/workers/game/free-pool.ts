@@ -31,20 +31,21 @@ function shuffle<T>(items: readonly T[], rand: () => number): T[] {
   return a;
 }
 
-/** Seven prompt ids, or null when the safe pool is too small. */
+/** `count` prompt ids (default seven), or null when the safe pool is too small. */
 export function pickFreePrompts(
   pool: readonly BankPrompt[],
   rand: () => number = Math.random,
+  count: number = ROUNDS_PER_DIVE,
 ): string[] | null {
-  if (pool.length < ROUNDS_PER_DIVE) return null;
+  if (pool.length < count) return null;
   const shuffled = shuffle(pool, rand);
   const picked: BankPrompt[] = [];
   for (const [category, n] of Object.entries(MIX)) {
     picked.push(...shuffled.filter((p) => p.category === category).slice(0, n));
   }
   for (const p of shuffled) {
-    if (picked.length >= ROUNDS_PER_DIVE) break;
+    if (picked.length >= count) break;
     if (!picked.includes(p)) picked.push(p);
   }
-  return shuffle(picked.slice(0, ROUNDS_PER_DIVE), rand).map((p) => p.id);
+  return shuffle(picked.slice(0, count), rand).map((p) => p.id);
 }
