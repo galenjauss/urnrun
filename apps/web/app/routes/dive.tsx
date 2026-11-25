@@ -44,13 +44,15 @@ function Status({ title, body, onRetry }: { title: string; body?: string; onRetr
 export default function Dive() {
   const [params] = useSearchParams();
   const location = useLocation();
-  const mode: DiveMode = params.get("mode") === "free" ? "free" : "daily";
+  const raw = params.get("mode");
+  const mode: DiveMode = raw === "free" || raw === "archive" ? raw : "daily";
+  const day = mode === "archive" ? Number(params.get("day")) : undefined;
   // Re-keyed per navigation so "Dive again" starts a fresh run.
-  return <DiveGame key={location.key} mode={mode} />;
+  return <DiveGame key={location.key} mode={mode} day={day} />;
 }
 
-function DiveGame({ mode }: { mode: DiveMode }) {
-  const { state, notice, submit, dismissHowTo, retry } = useDive(undefined, mode);
+function DiveGame({ mode, day }: { mode: DiveMode; day?: number }) {
+  const { state, notice, submit, dismissHowTo, retry } = useDive(undefined, mode, day);
   const { phase, current, slots, feedback, pending, ledger, lastIdx, error } = state;
   const inRound = phase === "preview" || phase === "answering" || phase === "reveal";
   const now = useNow(phase === "preview" || phase === "answering");

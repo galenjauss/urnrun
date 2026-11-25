@@ -225,6 +225,31 @@ export function createGameService({ repo, secret, now, shareUrl }: GameServiceDe
     return startResult(run);
   }
 
+  /** Archive replay (SPEC §3.9): any finished past Daily, as often as you like; no streak credit. */
+  async function startArchive(userId: string, day: number): Promise<StartResult> {
+    const today = dayNumber(new Date(now()));
+    if (!Number.isInteger(day) || day >= today) {
+      throw new GameError("not_archived", 404, "That dive isn't in the archive yet");
+    }
+    const promptIds = await repo.getScheduledPromptIds(day);
+    if (!promptIds || promptIds.length !== ROUNDS_PER_DIVE) {
+      throw new GameError("not_archived", 404, "That dive isn't in the archive yet");
+    }
+    await repo.ensureUser(userId, now());
+    const run: RunRow = {
+      id: randomId(),
+      userId,
+      mode: "archive",
+      day,
+      promptIds,
+      startedAt: now(),
+      finishedAt: null,
+      totalSouls: 0,
+    };
+    await repo.createRun(run);
+    return startResult(run);
+  }
+
   async function openRound(run: RunRow, idx: number): Promise<RoundRow> {
     const rounds = await sweep(run.id);
     const round = rounds[idx];
@@ -385,10 +410,12 @@ export function createGameService({ repo, secret, now, shareUrl }: GameServiceDe
 
     let percentile: number | null = null;
     let players = 1;
-    if (run.mode === "daily" && run.day !== null) {
+    if ((run.mode === "daily" || run.mode === "archive") && run.day !== null) {
       const p = await repo.percentileFor(run.day, total);
       players = p.players;
-      percentile = p.players > 1 ? Math.round((p.below / (p.players - 1)) * 100) : null;
+      // A daily finisher is counted among `players`; an archive replayer is not.
+      const others = run.mode === "daily" ? p.players - 1 : p.players;
+      percentile = others > 0 ? Math.round((p.below / others) * 100) : null;
     }
 
     return {
@@ -402,11 +429,16 @@ export function createGameService({ repo, secret, now, shareUrl }: GameServiceDe
       rounds: await reveal(run, rounds),
       share: buildShareText({
         day: run.day ?? 0,
-        label: run.mode === "free" ? "Free Dive" : undefined,
+        label:
+          run.mode === "free"
+            ? "Free Dive"
+            : run.mode === "archive"
+              ? `Replay ${run.day !== null && run.day >= 1 ? `#${run.day}` : "Beta"}`
+              : undefined,
         tiers: rounds.map((r) => r.tier),
         percentile,
         url:
-          run.day !== null
+          run.mode === "daily" && run.day !== null
             ? `${shareUrl}${shareCardPath(
                 run.day,
                 rounds.map((r) => r.tier),
@@ -433,7 +465,7 @@ export function createGameService({ repo, secret, now, shareUrl }: GameServiceDe
     };
   }
 
-  return { startDaily, startFree, serveRound, guess, expireRound, finish, today };
+  return { startDaily, startFree, startArchive, serveRound, guess, expireRound, finish, today };
 }
 
 export type GameService = ReturnType<typeof createGameService>;

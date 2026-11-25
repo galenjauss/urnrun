@@ -2,7 +2,7 @@ import { nextResetAt } from "@urnrun/core";
 import { useState } from "react";
 import type { FinishResult } from "../api";
 import { Link } from "react-router";
-import { loadFreeBest } from "../storage";
+import { loadArchiveBest, loadFreeBest } from "../storage";
 import { useNow } from "../useNow";
 import { useRollUp } from "../useRollUp";
 import { Constellation } from "./Constellation";
@@ -47,7 +47,13 @@ function ShareButton({ text }: { text: string }) {
   );
 }
 
-function percentileLine(r: FinishResult): string {
+function percentileLine(r: FinishResult, replay = false): string {
+  if (replay) {
+    if (r.percentile === null) return "Nobody finished that day’s dive.";
+    const n = r.players.toLocaleString("en-US");
+    if (r.percentile >= 100) return `Deeper than all ${n} couriers that day.`;
+    return `Deeper than ${r.percentile}% of that day’s ${n} couriers.`;
+  }
   if (r.percentile === null) return "The first courier down today.";
   const players = r.players.toLocaleString("en-US");
   // Same wording as the share text (core buildShareText) so the two never disagree.
@@ -56,8 +62,24 @@ function percentileLine(r: FinishResult): string {
 }
 
 /** THE LEDGER — results, per-round crowd reveal, share. */
-function NextDive({ free }: { free: boolean }) {
+function NextDive({ free, replayDay }: { free: boolean; replayDay: number | null }) {
   const [best] = useState(() => (free ? loadFreeBest() : 0));
+  const [replayBest] = useState(() => (replayDay !== null ? loadArchiveBest(replayDay) : 0));
+  if (replayDay !== null) {
+    return (
+      <div className="ledger-next">
+        {replayBest > 0 ? (
+          <p className="ledger-free-best">Best replay: {formatFt(replayBest)}</p>
+        ) : null}
+        <Link className="cta" to={`/dive?mode=archive&day=${replayDay}`}>
+          Replay again
+        </Link>
+        <p>
+          <Link to={`/ledger/${replayDay}`}>See that day’s ledger →</Link>
+        </p>
+      </div>
+    );
+  }
   return (
     <div className="ledger-next">
       {free && best > 0 ? (
@@ -75,6 +97,7 @@ function NextDive({ free }: { free: boolean }) {
 
 export function Ledger({ result }: { result: FinishResult }) {
   const free = result.mode === "free";
+  const replay = result.mode === "archive";
   const depth = useRollUp(result.totalSouls);
   return (
     <section className="ledger" aria-labelledby="ledger-title">
@@ -83,16 +106,18 @@ export function Ledger({ result }: { result: FinishResult }) {
           The Ledger
           {free
             ? " · Free Dive"
-            : result.day !== null && result.day >= 1
-              ? ` · #${result.day}`
-              : " · Beta"}
+            : replay
+              ? ` · Replay${result.day !== null && result.day >= 1 ? ` #${result.day}` : " · Beta"}`
+              : result.day !== null && result.day >= 1
+                ? ` · #${result.day}`
+                : " · Beta"}
         </p>
         <h2 id="ledger-title" className="ledger-depth" aria-label={formatFt(result.totalSouls)}>
           <span aria-hidden="true">{formatFt(depth)}</span>
         </h2>
         <p className="ledger-zone">{result.zone}</p>
         <p className="ledger-verdict">{result.verdict}</p>
-        {free ? null : <p className="ledger-pct">{percentileLine(result)}</p>}
+        {free ? null : <p className="ledger-pct">{percentileLine(result, replay)}</p>}
         {result.streak ? (
           <p className="ledger-streak">
             Streak {result.streak.current} · best {result.streak.best}
@@ -154,7 +179,7 @@ export function Ledger({ result }: { result: FinishResult }) {
         </pre>
         <ShareButton text={result.share} />
       </div>
-      <NextDive free={free} />
+      <NextDive free={free} replayDay={replay ? result.day : null} />
       <Countdown />
     </section>
   );

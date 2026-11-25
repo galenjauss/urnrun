@@ -53,7 +53,8 @@ const post = (body?: unknown): RequestInit => ({
 
 export const api = {
   today: () => call<TodayResult>("/today"),
-  start: (mode: "daily" | "free" = "daily") => call<StartResult>("/run", post({ mode })),
+  start: (mode: "daily" | "free" | "archive" = "daily", day?: number) =>
+    call<StartResult>("/run", post({ mode, day })),
   serve: (runId: string, token: string, idx: number) =>
     call<ServeResult>(`/run/${runId}/round/${idx}/serve`, post(), token),
   guess: (runId: string, token: string, idx: number, text: string, confirm?: string) =>
