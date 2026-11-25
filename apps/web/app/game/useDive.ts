@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useLayoutEffect, useReducer, useRef, useState } from "react";
 import { api as defaultApi, ApiError, type Api } from "./api";
 import { diveReducer, initialState, nextIdx } from "./machine";
-import { hasSeenHowTo, markHowToSeen, recordFreeBest, recordResult } from "./storage";
+import {
+  hasSeenHowTo,
+  markHowToSeen,
+  recordArchiveBest,
+  recordFreeBest,
+  recordResult,
+} from "./storage";
 
 export const REVEAL_MS = 1_800;
 const EXPIRE_SLACK_MS = 150;
@@ -10,16 +16,17 @@ const TOO_EARLY_RETRY_MS = 700;
 const message = (err: unknown): string =>
   err instanceof ApiError ? err.message : "Something went wrong on the way down";
 
-export type DiveMode = "daily" | "free";
+export type DiveMode = "daily" | "free" | "archive";
 
 const CLOSED: Readonly<Record<string, string>> = {
   no_dive: "No dive is scheduled right now. Check back soon.",
   daily_first: "Finish today’s dive to unlock Free Dive.",
   no_free: "Free Dive opens once the archive has grown — check back after a few more dives.",
+  not_archived: "That dive isn’t in the archive yet.",
 };
 
 /** Drives one dive (Daily or Free) against the API. All timing is server-anchored via the reducer. */
-export function useDive(client: Api = defaultApi, mode: DiveMode = "daily") {
+export function useDive(client: Api = defaultApi, mode: DiveMode = "daily", day?: number) {
   const [state, dispatch] = useReducer(diveReducer, initialState);
   const [notice, setNotice] = useState<string | null>(null);
   const stateRef = useRef(state);
@@ -29,7 +36,7 @@ export function useDive(client: Api = defaultApi, mode: DiveMode = "daily") {
 
   const boot = useCallback(async () => {
     try {
-      const result = await client.start(mode);
+      const result = await client.start(mode, day);
       dispatch({ type: "started", result, showHowTo: !hasSeenHowTo() });
     } catch (err) {
       if (err instanceof ApiError && CLOSED[err.code]) {
@@ -38,7 +45,7 @@ export function useDive(client: Api = defaultApi, mode: DiveMode = "daily") {
         dispatch({ type: "failed", message: message(err) });
       }
     }
-  }, [client, mode]);
+  }, [client, mode, day]);
 
   useEffect(() => {
     void boot();
@@ -118,7 +125,9 @@ export function useDive(client: Api = defaultApi, mode: DiveMode = "daily") {
       .then((result) => {
         if (!live) return;
         if (result.mode === "free") recordFreeBest(result.totalSouls);
-        else if (result.day !== null) recordResult(result.day, result.totalSouls);
+        else if (result.mode === "archive" && result.day !== null) {
+          recordArchiveBest(result.day, result.totalSouls);
+        } else if (result.day !== null) recordResult(result.day, result.totalSouls);
         dispatch({ type: "finished", result });
       })
       .catch((err: unknown) => live && dispatch({ type: "failed", message: message(err) }));

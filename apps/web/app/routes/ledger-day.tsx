@@ -40,6 +40,11 @@ export default function LedgerDay({ loaderData }: Route.ComponentProps) {
   const { ledger } = loaderData;
   return (
     <ContentPage title={dayLabel(ledger.day)} kicker={`The Ledger · ${dayDate(ledger.day)}`}>
+      <p>
+        <Link className="cta" to={`/dive?mode=archive&day=${ledger.day}`}>
+          Replay this dive
+        </Link>
+      </p>
       <dl className="day-stats">
         <div>
           <dt>Couriers</dt>

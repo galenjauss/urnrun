@@ -82,9 +82,10 @@ Content (P1b) runs continuously from Day 1 to launch — it's the longest pole.
 **Exit:** visual regression baselines captured; 60 fps on mid devices. **🔎 Galen playtest #2** (feel pass).
 
 ## Phase 4 — Modes, accounts & social (Day 6–11)
-- [ ] Free Dive (post-daily unlock, relaxed timer option) · Archive (replays, best score).
-- [ ] SSR Ledger pages for past days (`/ledger/:day`) + About/How-to/FAQ/Privacy/Terms (AdSense prerequisites).
-- [ ] OG card renderer (`/s/:day/:code`, Satori/resvg-wasm in Worker, Cache API + KV).
+- [ ] ✅ Free Dive (post-daily unlock, never spoils upcoming dailies) · ✅ Archive (replays, best score)
+      · ⏳ relaxed 40 s timer option.
+- [x] SSR Ledger pages for past days (`/ledger/:day`) + About/How-to/FAQ/Privacy/Terms (AdSense prerequisites).
+- [x] OG card renderer (`/s/:day/:code`, SVG → resvg-wasm in Worker, Cache API).
 - [ ] Optional login: Discord OAuth + Steam OpenID; anon→account merge; sessions.
 - [ ] Friends codes/invites, friends board, badges, streak freezes, urn skins, stats page.
 - [ ] Streamer mode + `?spoilers=off`.

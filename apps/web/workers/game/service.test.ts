@@ -314,6 +314,50 @@ describe("free dive", () => {
   });
 });
 
+describe("archive replay", () => {
+  it("only replays finished past days", async () => {
+    await expectCode(svc().startArchive("u1", DAY), "not_archived");
+    await expectCode(svc().startArchive("u1", DAY - 1), "not_archived"); // unscheduled
+    repo.schedule.set(DAY - 1, repo.schedule.get(DAY)!);
+    const a = await svc().startArchive("u1", DAY - 1);
+    expect((await repo.getRun(a.runId))!.mode).toBe("archive");
+    const b = await svc().startArchive("u1", DAY - 1);
+    expect(b.runId).not.toBe(a.runId); // replay as often as you like
+  });
+
+  it("ranks against that day's couriers without streak or tallies", async () => {
+    // Two real couriers on DAY, then the clock moves to the next day and u3 replays DAY.
+    const x = await playAll("x", ["Seven", "Seven", "Seven", "Seven", "Seven", "Seven", "Seven"]);
+    await svc().finish("x", x.runId, x.token);
+    const y = await playAll("y", [
+      "Paradox",
+      "Paradox",
+      "Seven",
+      "Seven",
+      "Seven",
+      "Seven",
+      "Seven",
+    ]);
+    await svc().finish("y", y.runId, y.token);
+    now = T0 + 86_400_000;
+    const talliesBefore = JSON.stringify([...repo.tallies]);
+    const s = await svc().startArchive("u3", DAY);
+    for (let i = 0; i < 7; i++) {
+      await svc().serveRound("u3", s.runId, s.token, i);
+      now += PREVIEW_MS;
+      await svc().guess("u3", s.runId, s.token, i, "Viscous");
+      now += 500;
+    }
+    const res = await svc().finish("u3", s.runId, s.token);
+    expect(res).toMatchObject({ mode: "archive", day: DAY, streak: null, totalSouls: 4200 });
+    expect(res.percentile).toBe(100); // deeper than both of that day's couriers
+    expect(res.share.startsWith("Urn Run Replay #5")).toBe(true);
+    expect(res.share).not.toContain("/s/");
+    expect(JSON.stringify([...repo.tallies])).toBe(talliesBefore);
+    expect(repo.streaks.get("u3")).toBeUndefined();
+  });
+});
+
 describe("today", () => {
   it("reports availability and the player's state", async () => {
     expect(await svc().today("u1")).toMatchObject({ day: DAY, available: true, played: null });

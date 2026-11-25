@@ -84,7 +84,9 @@ export class FakeRepo implements GameRepo {
     this.runs.set(runId, { ...run, totalSouls: total, finishedAt: now });
   }
   async percentileFor(day: number, total: number) {
-    const done = [...this.runs.values()].filter((r) => r.day === day && r.finishedAt !== null);
+    const done = [...this.runs.values()].filter(
+      (r) => r.mode === "daily" && r.day === day && r.finishedAt !== null,
+    );
     return { below: done.filter((r) => r.totalSouls < total).length, players: done.length };
   }
   async activePrompts() {
@@ -102,7 +104,9 @@ export class FakeRepo implements GameRepo {
       .slice(0, limit);
   }
   async dayStats(day: number) {
-    const done = [...this.runs.values()].filter((r) => r.day === day && r.finishedAt !== null);
+    const done = [...this.runs.values()].filter(
+      (r) => r.mode === "daily" && r.day === day && r.finishedAt !== null,
+    );
     const sum = done.reduce((s, r) => s + r.totalSouls, 0);
     return {
       players: done.length,

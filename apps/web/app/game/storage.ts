@@ -85,3 +85,25 @@ export function recordFreeBest(total: number): number {
 }
 
 export const loadFreeBest = (): number => Number(read(FREE_BEST_KEY)) || 0;
+
+const ARCHIVE_BEST_KEY = "urnrun:archivebest:v1";
+
+function loadArchiveBests(): Record<string, number> {
+  try {
+    const v: unknown = JSON.parse(read(ARCHIVE_BEST_KEY) ?? "{}");
+    return v && typeof v === "object" ? (v as Record<string, number>) : {};
+  } catch {
+    return {};
+  }
+}
+
+/** Best replay score per archived day (SPEC §3.9). Returns the best after folding in. */
+export function recordArchiveBest(day: number, total: number): number {
+  const all = loadArchiveBests();
+  const best = Math.max(Number(all[day]) || 0, total);
+  all[day] = best;
+  write(ARCHIVE_BEST_KEY, JSON.stringify(all));
+  return best;
+}
+
+export const loadArchiveBest = (day: number): number => Number(loadArchiveBests()[day]) || 0;
