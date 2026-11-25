@@ -15,7 +15,7 @@
 | Local CLI auth | `wrangler login` (OAuth) done 2026-11-25 |
 
 ## Pending
-- [ ] GitHub repo + `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` Actions secrets
+- [x] GitHub repo `galenjauss/urnrun` + `CLOUDFLARE_API_TOKEN` (token "urnrun-github-deploy": Workers, KV, D1 edit) / `CLOUDFLARE_ACCOUNT_ID` Actions secrets
 - [ ] Discord OAuth app → `DISCORD_CLIENT_ID` / `DISCORD_CLIENT_SECRET`
 - [ ] Steam Web API key → `STEAM_API_KEY`
 - [ ] Anthropic API key (prompt drafting, local only) → `ANTHROPIC_API_KEY`
@@ -27,3 +27,13 @@
 |---|---|---|
 | `galenjauss/urnrun` | **public** | app, engine, pipeline code, docs |
 | `galenjauss/urnrun-content` | **private** (create in Phase 1b) | approved prompts, answer sets, aliases, why-nots, schedule. **Answers must never be committed to the public repo.** |
+
+## Public-repo security (applied 2026-11-25)
+- **No secrets in git, ever.** Deploy credentials live only in the GitHub **`production` environment**, which can deploy only from `main`. There are no repo-level secrets, so a workflow on any other branch or PR gets none.
+- **Workflow `GITHUB_TOKEN` is read-only by default**, and workflows can't approve PRs.
+- **Every workflow run from an outside contributor needs manual approval.** PRs from forks never receive secrets.
+- **Secret scanning and push protection are on.** Pushes that contain recognizable credentials are blocked.
+- **`main` can't be force-pushed or deleted.**
+- Never use `pull_request_target` or `workflow_run` with secrets. Pin third-party Actions to commit SHAs.
+- **Answer data stays out of this repo** (see Repos). The API serves answers only after a guess resolves.
+- Local secrets go in `.dev.vars` (git-ignored). Production secrets go in `wrangler secret put`.
