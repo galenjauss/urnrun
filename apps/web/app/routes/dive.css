@@ -112,20 +112,20 @@
 }
 .prompt-card::before,
 .prompt-card::after {
-  /* deco corner fans */
+  /* deco corner brackets, centred on the 4–5px inset line */
   content: "";
   position: absolute;
-  top: -1px;
+  top: 3.5px;
   width: 22px;
   height: 22px;
   border-top: 2px solid var(--brass-500);
 }
 .prompt-card::before {
-  left: -1px;
+  left: 3.5px;
   border-left: 2px solid var(--brass-500);
 }
 .prompt-card::after {
-  right: -1px;
+  right: 3.5px;
   border-right: 2px solid var(--brass-500);
 }
 .prompt-meta {
