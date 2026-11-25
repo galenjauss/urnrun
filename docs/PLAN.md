@@ -18,13 +18,12 @@ Content (P1b) runs continuously from Day 1 to launch — it's the longest pole.
 
 ## Phase 0 — Accounts & scaffold (Day 0–1)
 **Galen (≈ 1 h, needs you):**
-- [ ] Create a **new Cloudflare account** (separate from Konjo) on a new email/alias.
-- [ ] Claim the account's workers.dev subdomain **`urnrun`** → game ships at `play.urnrun.workers.dev`.
+- [x] Create a **new Cloudflare account** (separate from Konjo).
+- [x] Claim the account's workers.dev subdomain **`urnrun`** → game ships at `play.urnrun.workers.dev`.
 - [ ] *(Deferred until traction)* Register `urnrun.gg` (Porkbun/Namecheap) + `urnrun.com` (Cloudflare Registrar).
-- [ ] Create a GitHub repo (or use this one) + add Cloudflare API token as repo secret.
-- [ ] Create a Discord app (OAuth) and get a Steam Web API key (for Steam OpenID profile lookups).
-- [ ] Create an Anthropic API key with a small spend cap for prompt drafting.
-- [ ] Reserve socials: X/Bluesky/TikTok `@urnrun`, Discord server "Urn Run".
+- [x] GitHub repo `galenjauss/urnrun` (public) + Cloudflare token in the `production` environment; private `galenjauss/urnrun-content` created.
+- [x] Discord app (OAuth) + Steam Web API key (stored as Worker secrets).
+- [x] Anthropic API key ($20/mo cap) — **optional, kept unused**; prompts are drafted in Claude Code sessions by default.
 
 **Claude:**
 - [ ] pnpm monorepo: `apps/web` (React Router v7 + Cloudflare Workers template), `packages/core`, `packages/data`.
@@ -49,7 +48,7 @@ Content (P1b) runs continuously from Day 1 to launch — it's the longest pole.
 - [ ] `data:snapshot` from deadlock-api (`/v1/assets/*` pinned to `client_version`) + analytics
       hero/item rates + deadlock-data release dates; zod schemas; sanitized descriptions.
 - [ ] Answer-set query DSL (`heroes.where(...)`, `items.where(slot=spirit, tier=3)`, `abilities.where(...)`).
-- [ ] `prompts:draft` (Claude API) → drafts with answer queries, aliases, why-nots, Wise Guy and
+- [ ] Prompt drafting (in Claude Code sessions; optional `prompts:draft` Claude API script later) → drafts with answer queries, aliases, why-nots, Wise Guy and
       Rejuvenator candidates.
 - [ ] `prompts:validate` + `schedule:build`.
 - [ ] Admin review page (`/admin`, gated by a secret + Discord-ID allowlist): approve/edit/reject,
@@ -111,6 +110,7 @@ Content (P1b) runs continuously from Day 1 to launch — it's the longest pole.
 - [ ] Code review pass (code-reviewer + typescript-reviewer agents) — fix CRITICAL/HIGH.
 
 ## Phase 7 — Closed beta (Day 11–14)
+- [ ] Reserve socials (deferred until the site works): X/Bluesky/TikTok `@urnrun`, Discord server "Urn Run".
 - [ ] 30–100 testers from Deadlock Discords + expert reviewers; private link; feedback widget.
 - [ ] **Beta answers seed rarity priors** for the first 14 scheduled dailies (cold-start fix).
 - [ ] Fix-list triage daily; alias/why-not expansion from flags.
@@ -135,4 +135,4 @@ Content (P1b) runs continuously from Day 1 to launch — it's the longest pole.
 1. Final verdict-band and zone names after the lore pass? (Placeholders in SPEC §3.3–3.4.)
 2. OK to approach mod creators for "Mod of the Week" features from a brand account?
 3. Who are the 2–3 expert reviewers? (I'll draft the Discord recruiting post.)
-4. Keep repo name `souldive` or rename to `urnrun`?
+4. ~~Repo name~~ — resolved: `galenjauss/urnrun`.
