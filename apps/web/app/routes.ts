@@ -14,6 +14,7 @@ export default [
   route("stats", "routes/stats.tsx"),
   route("lobby", "routes/lobby.tsx"),
   route("lobby/:code", "routes/lobby-room.tsx"),
+  route("overlay/:code", "routes/overlay.tsx"),
   route("robots.txt", "routes/robots[.]txt.ts"),
   route("sitemap.xml", "routes/sitemap[.]xml.ts"),
 ] satisfies RouteConfig;

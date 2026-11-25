@@ -1,5 +1,6 @@
 import { TIERS } from "@urnrun/core";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
+import { getPrefs, subscribePrefs } from "../game/prefs";
 import { Link, useParams } from "react-router";
 import { categoryLabel, formatFt } from "../game/tiers";
 import { useNow } from "../game/useNow";
@@ -102,9 +103,7 @@ function Room({ code, name }: { code: string; name: string }) {
         <Link to="/" className="dive-mark">
           Urn Run
         </Link>
-        <span className="lobby-code" aria-label={`Room code ${code}`}>
-          {code}
-        </span>
+        <RoomCode code={code} />
         {conn !== "open" ? <span className="lobby-conn">Reconnecting…</span> : null}
       </header>
 
@@ -133,6 +132,28 @@ function Room({ code, name }: { code: string; name: string }) {
 
 type Send = (msg: Record<string, unknown>) => void;
 
+/** Streamer mode hides the code until clicked (SPEC §3.10 streamer support). */
+function RoomCode({ code }: { code: string }) {
+  const streamer = useSyncExternalStore(
+    subscribePrefs,
+    () => getPrefs().streamer,
+    () => false,
+  );
+  const [shown, setShown] = useState(false);
+  if (streamer && !shown) {
+    return (
+      <button type="button" className="lobby-code is-hidden" onClick={() => setShown(true)}>
+        Show code
+      </button>
+    );
+  }
+  return (
+    <span className="lobby-code" aria-label={`Room code ${code}`}>
+      {code}
+    </span>
+  );
+}
+
 function Waiting({
   view,
   isHost,
@@ -150,6 +171,9 @@ function Waiting({
     <section className="lobby-card">
       <h1 className="lobby-title">The séance gathers</h1>
       <p>Share the code or the link. Up to 16 couriers.</p>
+      <p className="lobby-wait">
+        Streaming? Add <code>/overlay/{code}</code> as an OBS browser source.
+      </p>
       <button
         type="button"
         className="lobby-link"

@@ -96,7 +96,7 @@ Content (P1b) runs continuously from Day 1 to launch — it's the longest pole.
       reconnection, host migration, 16-player cap, GC.
 - [x] **Séance** mode (P0): room uniqueness bonus, jinx animation, podium ceremony, rematch.
 - [ ] **Hot Urn** mode (P1): fuse, lives, rare-answer life meter.
-- [ ] OBS overlay route `/overlay/:room`.
+- [x] OBS overlay route `/overlay/:room` (watch-only socket; code never shown) + streamer click-to-reveal code.
 **Exit:** 8-client load test (Playwright multi-context) stable; latency-tolerant at 300 ms RTT.
 
 ## Phase 6 — Hardening & launch readiness (Day 10–13)

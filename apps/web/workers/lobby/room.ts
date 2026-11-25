@@ -36,6 +36,8 @@ const Message = z.discriminatedUnion("type", [
 
 interface Attachment {
   pid: string;
+  /** OBS overlay / watcher: receives state, never joins or acts. */
+  spectator?: boolean;
 }
 
 /**
@@ -100,6 +102,13 @@ export class LobbyRoom extends DurableObject<Env> {
       return new Response("expected websocket", { status: 426 });
     }
     if (!s) return new Response("no such room", { status: 404 });
+    if (request.headers.get("x-urn-spectate") === "1") {
+      const pair = new WebSocketPair();
+      this.ctx.acceptWebSocket(pair[1], ["spectator"]);
+      pair[1].serializeAttachment({ pid: "", spectator: true } satisfies Attachment);
+      pair[1].send(JSON.stringify({ type: "state", view: publicView(s, Date.now()) }));
+      return new Response(null, { status: 101, webSocket: pair[0] });
+    }
     let next: LobbyState;
     try {
       next = join(s, { id: pid, name }, Date.now());
@@ -118,7 +127,12 @@ export class LobbyRoom extends DurableObject<Env> {
   }
 
   async webSocketMessage(ws: WebSocket, raw: string | ArrayBuffer): Promise<void> {
-    const { pid } = ws.deserializeAttachment() as Attachment;
+    const { pid, spectator } = ws.deserializeAttachment() as Attachment;
+    if (spectator) {
+      // Watchers can only keep the connection alive.
+      ws.send(JSON.stringify({ type: "pong", serverNow: Date.now() }));
+      return;
+    }
     const s = await this.load();
     if (!s) return ws.close(4404, "room gone");
     const send = (m: unknown) => ws.send(JSON.stringify(m));
@@ -171,7 +185,8 @@ export class LobbyRoom extends DurableObject<Env> {
   }
 
   async webSocketClose(ws: WebSocket): Promise<void> {
-    const { pid } = ws.deserializeAttachment() as Attachment;
+    const { pid, spectator } = ws.deserializeAttachment() as Attachment;
+    if (spectator) return;
     const s = await this.load();
     if (!s) return;
     // Another tab for the same courier may still be connected.
@@ -188,7 +203,10 @@ export class LobbyRoom extends DurableObject<Env> {
   async alarm(): Promise<void> {
     const s = await this.load();
     if (!s) return;
-    if (isEmpty(s) && this.ctx.getWebSockets().length === 0) {
+    const players = this.ctx
+      .getWebSockets()
+      .filter((w) => !(w.deserializeAttachment() as Attachment).spectator);
+    if (isEmpty(s) && players.length === 0) {
       await this.ctx.storage.deleteAll();
       this.state = null;
       return;

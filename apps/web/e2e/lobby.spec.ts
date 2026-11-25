@@ -55,3 +55,25 @@ test("unknown rooms say so", async ({ page }) => {
   await page.goto("/lobby/ZZZZZ");
   await expect(page.getByRole("heading", { name: /no séance here/i })).toBeVisible();
 });
+
+test("the OBS overlay watches without joining or showing the code", async ({ browser }) => {
+  const host = await (await browser.newContext()).newPage();
+  await host.goto("/lobby");
+  await host.getByLabel("Your name").fill("Ann");
+  await host.getByRole("button", { name: /open a séance/i }).click();
+  await host.waitForURL(/\/lobby\/[A-Z]{5}$/);
+  const code = host.url().split("/").pop()!;
+
+  const overlay = await (
+    await browser.newContext({ viewport: { width: 1280, height: 720 } })
+  ).newPage();
+  await overlay.goto(`/overlay/${code}`);
+  await expect(overlay.locator(".ov-board li")).toHaveCount(1);
+  await expect(overlay.locator(".ov-board")).toContainText("Ann");
+  await expect(host.locator(".lobby-players h2")).toContainText("· 1");
+  expect(await overlay.locator("body").innerText()).not.toContain(code);
+
+  await host.getByRole("radio", { name: "5", exact: true }).click();
+  await host.getByRole("button", { name: /begin the séance/i }).click();
+  await expect(overlay.locator(".ov-prompt")).toContainText("E2E prompt");
+});
