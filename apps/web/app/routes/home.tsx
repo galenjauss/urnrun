@@ -1,5 +1,7 @@
 import { dayNumber, dayStart } from "@urnrun/core";
 import { Link } from "react-router";
+import { SiteFooter } from "../content/SiteFooter";
+import "../content/content.css";
 import { Scene } from "../scene/Scene";
 
 import type { Route } from "./+types/home";
@@ -80,6 +82,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
           {daysUntilLaunch > 0 ? "Beta dive" : "Pick up the Urn"}
         </Link>
       </section>
+      <SiteFooter />
     </main>
   );
 }
