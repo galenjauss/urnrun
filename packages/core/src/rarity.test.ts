@@ -93,13 +93,21 @@ describe("computeLiveTiers", () => {
     expect(computeLiveTiers(seeds, { gem: 900, obvious1: 100 }).gem).toBe("rejuvenator");
   });
 
-  it("unseen answers with no responses keep their seed", () => {
-    const tiers = computeLiveTiers(seeds, { obvious1: 300 });
-    expect(tiers.rare).toBe("walker");
-  });
-
   it("respects a custom minimum sample", () => {
     const tiers = computeLiveTiers(seeds, { deep: 9, obvious1: 1 }, { minSample: 10 });
     expect(tiers.deep).toBe("guardian");
+  });
+});
+
+describe("computeLiveTiers hardening", () => {
+  it("treats never-named answers as rarest once the sample is large enough", () => {
+    const tiers = computeLiveTiers(seeds, { obvious1: 300 });
+    expect(tiers.rare).toBe("mid_boss"); // walker seed, +1
+    expect(tiers.clever).not.toBe("wise_guy"); // 0% share < 1%
+  });
+
+  it("ignores undefined option overrides", () => {
+    const tiers = computeLiveTiers(seeds, { deep: 9, obvious1: 1 }, { minSample: undefined });
+    expect(tiers.deep).toBe("mid_boss"); // still below the default n ≥ 200
   });
 });

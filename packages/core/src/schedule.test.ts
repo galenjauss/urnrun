@@ -86,3 +86,24 @@ describe("buildSchedule", () => {
     expect(() => buildSchedule({ ...opts, prompts: tiny, days: 5 })).toThrow(/lore/);
   });
 });
+
+describe("buildSchedule hardening", () => {
+  const opts = { prompts: bank(), startDay: 1, days: 30, seed: "launch" };
+
+  it("uses the latest day per prompt even when history is unsorted", () => {
+    const history = [
+      { day: 0, promptIds: ["heroes-0"] },
+      { day: -40, promptIds: ["heroes-0"] },
+    ];
+    const early = buildSchedule({ ...opts, history })
+      .filter((d) => d.day < 30)
+      .flatMap((d) => d.promptIds);
+    expect(early).not.toContain("heroes-0");
+  });
+
+  it("rejects duplicate prompt ids and non-positive day counts", () => {
+    const dup = [...bank(), bank()[0]!];
+    expect(() => buildSchedule({ ...opts, prompts: dup })).toThrow(/duplicate/i);
+    expect(() => buildSchedule({ ...opts, days: 0 })).toThrow(/days/);
+  });
+});

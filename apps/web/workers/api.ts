@@ -23,7 +23,8 @@ export function createApi() {
     return c.json(
       ok({
         status: "ok",
-        day: dayNumber(now),
+        day: Math.max(dayNumber(now), 0),
+        launched: dayNumber(now) >= 1,
         nextResetAt: nextResetAt(now).toISOString(),
       }),
     );

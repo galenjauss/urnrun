@@ -10,12 +10,13 @@ describe("API", () => {
     const body = (await res.json()) as {
       ok: boolean;
       error: unknown;
-      data: { status: string; day: number; nextResetAt: string };
+      data: { status: string; day: number; launched: boolean; nextResetAt: string };
     };
     expect(body.ok).toBe(true);
     expect(body.error).toBeNull();
     expect(body.data.status).toBe("ok");
-    expect(Number.isInteger(body.data.day)).toBe(true);
+    expect(body.data.day).toBeGreaterThanOrEqual(0);
+    expect(body.data.launched).toBe(body.data.day >= 1);
     expect(new Date(body.data.nextResetAt).getUTCHours()).toBe(0);
   });
 

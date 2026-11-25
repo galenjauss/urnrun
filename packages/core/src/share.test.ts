@@ -30,3 +30,15 @@ describe("buildShareText", () => {
     expect(text.split("\n")[1]).toBe("▃▁█▅▂▆_");
   });
 });
+
+describe("share hardening", () => {
+  it("rounds and clamps the percentile", () => {
+    expect(buildShareText({ ...base, tiers: [...base.tiers], percentile: 87.333 })).toMatch(
+      /than 87%/,
+    );
+    expect(buildShareText({ ...base, tiers: [...base.tiers], percentile: 140 })).toMatch(
+      /than 99%/,
+    );
+    expect(buildShareText({ ...base, tiers: [...base.tiers], percentile: -3 })).toMatch(/than 0%/);
+  });
+});

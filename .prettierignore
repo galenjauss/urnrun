@@ -8,3 +8,4 @@ coverage
 worker-configuration.d.ts
 content
 docs
+packages/data/data/*.json

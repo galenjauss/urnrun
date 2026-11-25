@@ -1,6 +1,10 @@
 import { createRng, seedFromString, shuffle } from "./rng";
 
-/** Deterministic daily schedule builder (SPEC §3.2, §4.2 step 5). */
+/**
+ * Deterministic daily schedule builder (SPEC §3.2, §4.2 step 5).
+ * Output depends on (seed, startDay, history, bank): published days must be persisted (D1
+ * `daily_schedule`) and passed back as `history` — never regenerate already-published days.
+ */
 
 export type Category = "heroes" | "items" | "lore" | "community";
 
@@ -81,11 +85,20 @@ export function buildSchedule({
   seed,
   history = [],
 }: ScheduleOptions): ScheduledDay[] {
+  if (!Number.isInteger(days) || days <= 0) throw new Error(`days must be a positive integer`);
+  const seen = new Set<string>();
+  for (const p of prompts) {
+    if (seen.has(p.id)) throw new Error(`Duplicate prompt id in bank: ${p.id}`);
+    seen.add(p.id);
+  }
+
   const byCategory = new Map<Category, SchedulablePrompt[]>();
   for (const p of prompts) byCategory.set(p.category, [...(byCategory.get(p.category) ?? []), p]);
 
   const lastUsed = new Map<string, number>();
-  for (const h of history) for (const id of h.promptIds) lastUsed.set(id, h.day);
+  for (const h of history) {
+    for (const id of h.promptIds) lastUsed.set(id, Math.max(h.day, lastUsed.get(id) ?? -Infinity));
+  }
 
   const schedule: ScheduledDay[] = [];
   for (let day = startDay; day < startDay + days; day++) {

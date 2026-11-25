@@ -70,9 +70,10 @@ function liveTierFor(
   if (seed.seedTier === "rejuvenator") return "rejuvenator";
   if (seed.locked) return "trooper";
   const count = tally[seed.answerId] ?? 0;
-  if (count === 0) return seed.seedTier;
   if (seed.seedTier === "wise_guy" && count / total >= opts.wiseGuyMinShare) return "wise_guy";
-  return clampToSeed(seed.seedTier, tierFromCum(cum[seed.answerId] ?? 0), opts);
+  // Never named (with a large enough sample) = rarer than everything that was named.
+  const answerCum = count === 0 ? 1 : (cum[seed.answerId] ?? 0);
+  return clampToSeed(seed.seedTier, tierFromCum(answerCum), opts);
 }
 
 /**
@@ -84,7 +85,10 @@ export function computeLiveTiers(
   tally: Readonly<Record<string, number>>,
   options: RarityOptions = {},
 ): Record<string, Tier> {
-  const opts = { ...DEFAULTS, ...options };
+  const overrides = Object.fromEntries(
+    Object.entries(options).filter(([, v]) => v !== undefined),
+  ) as RarityOptions;
+  const opts: Required<RarityOptions> = { ...DEFAULTS, ...overrides };
   const total = Object.values(tally).reduce((sum, n) => sum + n, 0);
   if (total < opts.minSample) {
     return Object.fromEntries(seeds.map((s) => [s.answerId, s.seedTier]));

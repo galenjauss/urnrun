@@ -28,7 +28,10 @@ export function buildShareText({
     )
     .join("");
   const lines = [`Urn Run #${day} · ${formatter.format(total)} ft · ${zoneFor(total).name}`, row];
-  if (percentile !== null) lines.push(`Deeper than ${percentile}% of couriers today`);
+  if (percentile !== null) {
+    const pct = Math.min(99, Math.max(0, Math.round(percentile)));
+    lines.push(`Deeper than ${pct}% of couriers today`);
+  }
   lines.push(url);
   return lines.join("\n");
 }

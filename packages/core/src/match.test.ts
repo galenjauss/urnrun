@@ -87,3 +87,21 @@ describe("matchGuess", () => {
     ).toThrow(/collision/i);
   });
 });
+
+describe("match hardening", () => {
+  it("throws when a why-not key collides with a real answer", () => {
+    expect(() =>
+      buildAnswerIndex({ answers: [{ id: "seven", display: "Seven" }], whyNot: { seven: "nope" } }),
+    ).toThrow(/why-not/i);
+  });
+
+  it("orders equal-distance suggestions by id deterministically", () => {
+    const idx = buildAnswerIndex({
+      answers: [
+        { id: "b", display: "abcd" },
+        { id: "a", display: "abce" },
+      ],
+    });
+    expect(matchGuess(idx, "abcf")).toEqual({ kind: "suggest", answerIds: ["a", "b"] });
+  });
+});

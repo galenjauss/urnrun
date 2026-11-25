@@ -1,5 +1,6 @@
+import { performance } from "node:perf_hooks";
 import { describe, expect, it } from "vitest";
-import { normalize } from "./normalize";
+import { MAX_GUESS_LENGTH, normalize } from "./normalize";
 
 describe("normalize", () => {
   it.each([
@@ -27,5 +28,26 @@ describe("normalize", () => {
   it("returns empty string for whitespace or punctuation only", () => {
     expect(normalize("   ")).toBe("");
     expect(normalize("?!...")).toBe("");
+  });
+});
+
+describe("normalize hardening", () => {
+  it("transliterates letters NFKD can't decompose", () => {
+    expect(normalize("Ørsted")).toBe("orsted");
+    expect(normalize("Straße")).toBe("strasse");
+    expect(normalize("Æther Œuvre")).toBe("aether oeuvre");
+    expect(normalize("Łódź")).toBe("lodz");
+  });
+
+  it("caps very long input so a hostile guess can't burn CPU", () => {
+    const hostile = "a ".repeat(500_000) + "seven";
+    const started = performance.now();
+    const out = normalize(hostile);
+    expect(performance.now() - started).toBeLessThan(50);
+    expect(out.length).toBeLessThanOrEqual(MAX_GUESS_LENGTH);
+  });
+
+  it("strips stacked leading articles in one pass", () => {
+    expect(normalize("the a an seven")).toBe("seven");
   });
 });

@@ -43,37 +43,48 @@ export function buildAnswerIndex({ answers, whyNot = {} }: AnswerIndexInput): An
   const why = new Map<string, string>();
   for (const [raw, reason] of Object.entries(whyNot)) {
     const key = normalize(raw);
-    if (key && !keys.has(key)) why.set(key, reason);
+    if (!key) continue;
+    if (keys.has(key)) {
+      throw new Error(`why-not "${raw}" collides with a valid answer (${keys.get(key)})`);
+    }
+    why.set(key, reason);
   }
   return { keys, whyNot: why };
 }
 
-/** Allowed edit distance for fuzzy suggestions, by normalized input length. */
+/**
+ * Allowed edit distance for fuzzy suggestions, by normalized input length (SPEC §3.6: ≤1 up to
+ * 6 chars, ≤2 longer). Inputs of ≤3 chars get no fuzzing — too many false "did you mean"s.
+ */
 export function fuzzyLimit(length: number): number {
   if (length <= 3) return 0;
   return length <= 6 ? 1 : 2;
 }
 
-/** Optimal-string-alignment Damerau-Levenshtein distance. */
+/**
+ * Optimal-string-alignment distance (Damerau-Levenshtein restricted to non-overlapping
+ * transpositions — the right model for typos). Uses three rolling rows.
+ */
 export function damerauLevenshtein(a: string, b: string): number {
-  const rows = a.length + 1;
-  const cols = b.length + 1;
-  const d: number[][] = Array.from({ length: rows }, (_, i) =>
-    Array.from({ length: cols }, (_, j) => (i === 0 ? j : j === 0 ? i : 0)),
-  );
-  for (let i = 1; i < rows; i++) {
-    const row = d[i]!;
-    const prev = d[i - 1]!;
-    for (let j = 1; j < cols; j++) {
+  if (a === b) return 0;
+  if (a.length === 0) return b.length;
+  if (b.length === 0) return a.length;
+  let prev2 = new Int32Array(b.length + 1);
+  let prev = Int32Array.from({ length: b.length + 1 }, (_, j) => j);
+  let curr = new Int32Array(b.length + 1);
+  for (let i = 1; i <= a.length; i++) {
+    curr[0] = i;
+    for (let j = 1; j <= b.length; j++) {
       const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-      let best = Math.min(prev[j]! + 1, row[j - 1]! + 1, prev[j - 1]! + cost);
+      let best = Math.min(prev[j]! + 1, curr[j - 1]! + 1, prev[j - 1]! + cost);
       if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
-        best = Math.min(best, d[i - 2]![j - 2]! + 1);
+        best = Math.min(best, prev2[j - 2]! + 1);
       }
-      row[j] = best;
+      curr[j] = best;
     }
+    [prev2, prev, curr] = [prev, curr, prev2];
   }
-  return d[a.length]![b.length]!;
+  return prev[b.length]!;
 }
 
 export function matchGuess(index: AnswerIndex, guess: string): MatchResult {
@@ -98,7 +109,7 @@ export function matchGuess(index: AnswerIndex, guess: string): MatchResult {
   if (best.size === 0) return { kind: "none" };
 
   const answerIds = [...best.entries()]
-    .sort(([idA, dA], [idB, dB]) => dA - dB || idA.localeCompare(idB))
+    .sort(([idA, dA], [idB, dB]) => dA - dB || (idA < idB ? -1 : idA > idB ? 1 : 0))
     .slice(0, MAX_SUGGESTIONS)
     .map(([id]) => id);
   return { kind: "suggest", answerIds };
