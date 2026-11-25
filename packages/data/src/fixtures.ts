@@ -34,7 +34,7 @@ export const rawHeroes = [
     player_selectable: true,
     disabled: false,
     in_development: true,
-    items: {},
+    items: { signature1: "ability_baba_brew" },
   },
 ];
 
@@ -57,6 +57,7 @@ export const rawItems = [
   ]),
   ability("ability_flame_dash", "Flame Dash", "signature", ["AbilityCooldown"]),
   ability("ability_afterburn", "Afterburn", "innate", ["DPS"]),
+  ability("ability_baba_brew", "Baba's Brew", "signature", ["SilenceDuration"]),
   ability("ability_fire_bomb", "Concussive Combustion", "ultimate", [
     "StunDuration",
     "AbilityCooldown",

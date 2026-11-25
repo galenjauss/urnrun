@@ -14,7 +14,7 @@ export type Condition =
 export interface AnswerSource {
   entity: "heroes" | "abilities" | "items";
   where?: Readonly<Record<string, Condition>>;
-  /** Heroes only: include heroes still in development. */
+  /** Heroes and abilities: include heroes (and their abilities) still in development. */
   includeUnreleased?: boolean;
 }
 
@@ -57,12 +57,17 @@ export function resolveAnswerSource(snapshot: Snapshot, source: AnswerSource): R
         : snapshot.heroes.filter((h) => h.released);
       return filterRows(pool, source.where).map((h) => ({ id: h.slug, display: h.name }));
     }
-    case "abilities":
-      return filterRows(snapshot.abilities, source.where).map((a) => ({
+    case "abilities": {
+      const released = new Set(snapshot.heroes.filter((h) => h.released).map((h) => h.slug));
+      const pool = source.includeUnreleased
+        ? snapshot.abilities
+        : snapshot.abilities.filter((a) => released.has(a.heroSlug));
+      return filterRows(pool, source.where).map((a) => ({
         id: a.slug,
         display: a.name,
         meta: { hero: a.heroName },
       }));
+    }
     case "items":
       return filterRows(snapshot.items, source.where).map((i) => ({ id: i.slug, display: i.name }));
   }
