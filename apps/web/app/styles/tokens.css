@@ -1,0 +1,33 @@
+/* Deco Occult Noir — design tokens (SPEC §5.2). Canvas code reads these same values. */
+:root {
+  --ink-950: oklch(13% 0.01 250);
+  --ink-900: oklch(17% 0.015 250);
+  --soot-700: oklch(28% 0.01 60);
+  --brass-500: oklch(66% 0.09 75);
+  --gold-400: oklch(80% 0.13 85);
+  --soul-400: oklch(84% 0.13 175);
+  --soul-600: oklch(62% 0.12 180);
+  --oxblood-600: oklch(38% 0.12 25);
+  --amber-500: oklch(74% 0.15 60);
+  --sapphire-500: oklch(58% 0.15 265);
+  --parchment-100: oklch(94% 0.03 85);
+
+  --tier-trooper: var(--soot-700);
+  --tier-wise: oklch(70% 0.14 320);
+  --tier-guardian: var(--brass-500);
+  --tier-walker: var(--sapphire-500);
+  --tier-midboss: var(--oxblood-600);
+  --tier-rejuv: var(--soul-400);
+
+  --font-display: "Limelight", "Marcellus SC", serif;
+  --font-ui: "Jost Variable", "Jost", system-ui, sans-serif;
+
+  --text-base: clamp(1rem, 0.92rem + 0.4vw, 1.125rem);
+  --text-hero: clamp(3rem, 1rem + 9vw, 8rem);
+  --space-gutter: 16px;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 150ms;
+  --dur-normal: 300ms;
+  --dur-slow: 1200ms;
+}

@@ -1,0 +1,33 @@
+/**
+ * Urn Run Worker — https://play.urnrun.workers.dev
+ * Non-secret config only. Secrets (DISCORD_CLIENT_SECRET, STEAM_API_KEY, ...) are set with
+ * `wrangler secret put <NAME> --name play` and never committed. Account ID comes from the
+ * CLOUDFLARE_ACCOUNT_ID env var (GitHub `production` environment) or local `wrangler login`.
+ */
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "play",
+  "compatibility_date": "2026-11-23",
+  "main": "./workers/app.ts",
+  "workers_dev": true,
+  "preview_urls": true,
+  "observability": { "enabled": true },
+  "upload_source_maps": true,
+  "vars": {
+    "APP_ENV": "production",
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "urnrun-db",
+      "database_id": "bf82caaa-5ceb-43a7-aa5f-840443b85173",
+      "migrations_dir": "migrations",
+    },
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "CACHE",
+      "id": "b4c849dcc29644629bd8ff8de885694f",
+    },
+  ],
+}
