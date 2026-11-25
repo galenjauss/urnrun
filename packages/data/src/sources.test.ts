@@ -26,6 +26,17 @@ describe("resolveAnswerSource", () => {
     expect(ids).toEqual(["baba", "infernus"]);
   });
 
+  it("drops abilities of unreleased heroes unless asked", () => {
+    const heroesOf = (includeUnreleased?: boolean) =>
+      new Set(
+        resolveAnswerSource(snap, { entity: "abilities", includeUnreleased }).map(
+          (a) => a.meta?.hero,
+        ),
+      );
+    expect(heroesOf().has("Baba")).toBe(false);
+    expect(heroesOf(true).has("Baba")).toBe(true);
+  });
+
   it("filters by equality, includes and in", () => {
     expect(resolveAnswerSource(snap, { entity: "heroes", where: { type: "mystic" } })).toHaveLength(
       1,

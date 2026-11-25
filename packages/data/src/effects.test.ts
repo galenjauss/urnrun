@@ -28,6 +28,7 @@ describe("deriveEffects", () => {
         "HealAmpReceivePenaltyPercent",
         "SlowResistance",
         "ChannelSlowPercent",
+        "FireRateSlow",
         "ReduceStunOnEnemyHitPercent",
         "StunDurationSelf",
         "BonusDamageVsBarrier",
