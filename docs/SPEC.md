@@ -117,7 +117,7 @@ Title (street, rain, the Urn on the curb)
 | **Rejuvenator** | 1,000 | 💠 | *the gem* — one hand-picked answer per prompt (rare **and** delightful) | full fanfare + glass chime cascade |
 
 Verdict bands on total: 0–1,500 *Street Rat* · 1,501–2,500 *Subway Runner* · 2,501–3,500 *Tunnel Rat* ·
-3,501–4,490 *Vault Breaker* · 4,500+ *Patron's Courier*. (Final names subject to lore pass.)
+3,501–4,499 *Vault Breaker* · 4,500+ *Patron's Courier*. (Final names subject to lore pass.)
 
 ### 3.4 Depth zones (the descent map)
 Each zone has its own painted parallax set, palette, ambience bed, particle system, and an **arrival
@@ -277,8 +277,9 @@ reviewer: "beta:expert-1"
    48 h without manual approval.
 
 ### 4.3 Launch content targets
-- **≥ 180 approved prompts** (≈ 6 months of dailies with 30-day no-repeat) — split 80 heroes/abilities,
-  50 items/economy, 25 lore, 25 community/pro.
+- **≥ 210 approved prompts** — split **90 heroes/abilities, 60 items/economy, 30 lore, 30 community/pro**.
+  This is the hard minimum for the 3/2/1/1 daily mix under the 30-day no-repeat rule (3 × 30 = 90
+  heroes, etc.); the schedule builder throws if a category runs dry. Aim for ~250 for headroom.
 - Community prompts include meme-mod culture (text only), e.g. "Name a hero with a famous meme mod".
 - **Mod of the Week** card on the title screen: creator credit + GameBanana link, **only with written
   permission**, original-design mods only (no celebrity/crossover/NSFW).

@@ -34,15 +34,15 @@ Content (P1b) runs continuously from Day 1 to launch — it's the longest pole.
 **Exit:** ✅ 2026-11-25 — title screen + `/api/health` deployed to play.urnrun.workers.dev from CI.
 
 ## Phase 1 — Core engine, TDD (Day 1–3) · `packages/core`
-- [ ] Seeded RNG (sfc32) + date→day-number + UTC reset helpers.
-- [ ] Normalization (case, diacritics, punctuation, `&`/and, articles) + alias resolution.
-- [ ] Fuzzy matcher (Damerau-Levenshtein thresholds, "did you mean" ranking, never auto-accept).
-- [ ] Scoring: tier table → souls; verdict bands; zone-from-depth.
-- [ ] Rarity: prior blending, live `cum`-share tiering, guards (+1/−2, locked Troopers, Wise Guy
+- [x] Seeded RNG (sfc32) + date→day-number + UTC reset helpers.
+- [x] Normalization (case, diacritics, punctuation, `&`/and, articles) + alias resolution.
+- [x] Fuzzy matcher (Damerau-Levenshtein thresholds, "did you mean" ranking, never auto-accept).
+- [x] Scoring: tier table → souls; verdict bands; zone-from-depth.
+- [x] Rarity: live `cum`-share tiering ✅ (prior blending lands with the data pipeline), guards (+1/−2, locked Troopers, Wise Guy
       stickiness, n ≥ 200), snapshot-at-submit semantics.
-- [ ] Schedule builder: category mix 3/2/1/1, 30-day no-repeat, overlap ≤ 60%, deterministic.
-- [ ] Share string builder (emoji + colorblind variant).
-**Exit:** ≥ 90% coverage; property tests for matcher/schedule determinism.
+- [x] Schedule builder: category mix 3/2/1/1, 30-day no-repeat, overlap ≤ 60%, deterministic.
+- [x] Share string builder (emoji + colorblind variant).
+**Exit:** ✅ 2026-11-25 — 101 tests, 100% lines / 95% branches, fast-check properties for matcher/rarity/schedule.
 
 ## Phase 1b — Data & content pipeline (Day 1 → launch, continuous) · `packages/data`, `content/`
 - [ ] `data:snapshot` from deadlock-api (`/v1/assets/*` pinned to `client_version`) + analytics
@@ -54,9 +54,9 @@ Content (P1b) runs continuously from Day 1 to launch — it's the longest pole.
 - [ ] Admin review page (`/admin`, gated by a secret + Discord-ID allowlist): approve/edit/reject,
       flag queue, rarity table viewer.
 - [ ] **Recruit 2–3 expert reviewers** from the Deadlock Community Discord (credit on the About page).
-- [ ] Content milestones: 60 approved prompts by Day 5 · 120 by Day 10 · **≥ 180 by launch**.
+- [ ] Content milestones: 70 approved prompts by Day 5 · 140 by Day 10 · **≥ 210 by launch** (90/60/30/30 — minimum for 30-day no-repeat).
 - [ ] Hero sigil set: 44+ SVG medallions (Claude drafts paths in batches of 8; Galen approves).
-**Exit:** 180 approved prompts, 60-day schedule in D1, all sigils approved.
+**Exit:** ≥ 210 approved prompts, 60-day schedule in D1, all sigils approved.
 
 ## Phase 2 — Vertical slice (Day 3–5)
 - [ ] Worker API: `/api/today`, run lifecycle (`run`, `serve`, `guess`, `finish`), HMAC run tokens,
