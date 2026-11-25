@@ -31,14 +31,10 @@ describe("dayStart / nextResetAt", () => {
   });
 
   it("nextResetAt is the next 00:00 UTC after now", () => {
-    expect(nextResetAt(at("2026-11-25T20:15:00Z")).toISOString()).toBe(
-      "2026-11-26T00:00:00.000Z",
-    );
+    expect(nextResetAt(at("2026-11-25T20:15:00Z")).toISOString()).toBe("2026-11-26T00:00:00.000Z");
   });
 
   it("nextResetAt at exactly midnight is the following midnight", () => {
-    expect(nextResetAt(at("2026-11-26T00:00:00Z")).toISOString()).toBe(
-      "2026-11-27T00:00:00.000Z",
-    );
+    expect(nextResetAt(at("2026-11-26T00:00:00Z")).toISOString()).toBe("2026-11-27T00:00:00.000Z");
   });
 });

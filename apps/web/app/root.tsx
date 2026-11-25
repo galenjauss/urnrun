@@ -18,10 +18,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, viewport-fit=cover"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="theme-color" content="#0b0e13" />
         <Meta />
         <Links />
@@ -46,10 +43,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 
   if (isRouteErrorResponse(error)) {
     message = error.status === 404 ? "404" : "Error";
-    details =
-      error.status === 404
-        ? "This passage doesn't exist."
-        : error.statusText || details;
+    details = error.status === 404 ? "This passage doesn't exist." : error.statusText || details;
   } else if (import.meta.env.DEV && error instanceof Error) {
     details = error.message;
     stack = error.stack;
@@ -63,11 +57,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
         margin: "0 auto",
       }}
     >
-      <h1
-        style={{ fontFamily: "var(--font-display)", color: "var(--gold-400)" }}
-      >
-        {message}
-      </h1>
+      <h1 style={{ fontFamily: "var(--font-display)", color: "var(--gold-400)" }}>{message}</h1>
       <p>{details}</p>
       {stack && (
         <pre style={{ overflowX: "auto", padding: "1rem" }}>

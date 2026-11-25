@@ -43,22 +43,8 @@ function Sunburst() {
           />
         ))}
       </g>
-      <circle
-        cx="100"
-        cy="100"
-        r="54"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
-      <circle
-        cx="100"
-        cy="100"
-        r="47"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="0.75"
-      />
+      <circle cx="100" cy="100" r="54" fill="none" stroke="currentColor" strokeWidth="2" />
+      <circle cx="100" cy="100" r="47" fill="none" stroke="currentColor" strokeWidth="0.75" />
       {/* Stylized urn silhouette (original art) */}
       <path
         d="M86 70h28l-4 8c10 5 16 14 16 25 0 14-11 25-26 27v6h10v6H90v-6h10v-6c-15-2-26-13-26-27 0-11 6-20 16-25z"

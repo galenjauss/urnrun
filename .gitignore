@@ -11,3 +11,4 @@ test-results/
 .DS_Store
 # answer data lives in the private urnrun-content repo
 content/
+.claude/settings.local.json
