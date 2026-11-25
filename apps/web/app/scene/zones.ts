@@ -121,8 +121,9 @@ export const LOOKS: readonly ZoneLook[] = [
   },
 ];
 
-/** Depth band (ft) over which one zone's look crossfades into the next, centred on the boundary. */
-export const BLEND_FT = 220;
+/** Depth band (ft) over which one zone's look crossfades into the next, ending at the boundary
+ * (so landing exactly on a zone's depth shows that zone fully). */
+export const BLEND_FT = 120;
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 export const mixRGB = (a: RGB, b: RGB, t: number): RGB => [
@@ -144,8 +145,8 @@ export function blendAt(depth: number): Blend {
   const d = Math.max(0, depth);
   for (let i = ZONES.length - 1; i >= 0; i--) {
     const z = ZONES[i]!;
-    if (d >= z.depth - BLEND_FT / 2 && i > 0) {
-      const t = Math.min(1, (d - (z.depth - BLEND_FT / 2)) / BLEND_FT);
+    if (d >= z.depth - BLEND_FT && i > 0) {
+      const t = Math.min(1, (d - (z.depth - BLEND_FT)) / BLEND_FT);
       return { from: LOOKS[i - 1]!, to: LOOKS[i]!, t: smooth(t) };
     }
   }
