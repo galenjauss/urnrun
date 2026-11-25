@@ -270,3 +270,19 @@
   margin: 6px 0 22px;
   border: 1px solid oklch(66% 0.09 75 / 0.4);
 }
+
+.stats-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+.stats-history {
+  width: 100%;
+  height: auto;
+  margin: 4px 0 18px;
+  border-bottom: 1px solid oklch(66% 0.09 75 / 0.35);
+}
+.stats-history rect {
+  fill: var(--soul-400);
+}
+.stats-history rect.miss {
+  fill: oklch(45% 0.01 250 / 0.6);
+}

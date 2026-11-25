@@ -2,15 +2,20 @@
 
 export interface Prefs {
   lowPower: boolean;
+  /** Streamer mode: hide crowd answers and Rejuvenators on the ledger. */
+  streamer: boolean;
 }
 
 const KEY = "urnrun:prefs:v1";
-const DEFAULT: Prefs = { lowPower: false };
+const DEFAULT: Prefs = { lowPower: false, streamer: false };
 
 export function parsePrefs(raw: string | null): Prefs {
   try {
     const v = raw ? (JSON.parse(raw) as Partial<Record<keyof Prefs, unknown>>) : null;
-    return { lowPower: typeof v?.lowPower === "boolean" ? v.lowPower : DEFAULT.lowPower };
+    return {
+      lowPower: typeof v?.lowPower === "boolean" ? v.lowPower : DEFAULT.lowPower,
+      streamer: typeof v?.streamer === "boolean" ? v.streamer : DEFAULT.streamer,
+    };
   } catch {
     return { ...DEFAULT };
   }

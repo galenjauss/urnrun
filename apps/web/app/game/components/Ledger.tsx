@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { FinishResult } from "../api";
 import { Link } from "react-router";
 import { loadArchiveBest, loadFreeBest } from "../storage";
+import { useSpoilersHidden } from "../useSpoilers";
 import { useNow } from "../useNow";
 import { useRollUp } from "../useRollUp";
 import { Constellation } from "./Constellation";
@@ -98,6 +99,7 @@ function NextDive({ free, replayDay }: { free: boolean; replayDay: number | null
 export function Ledger({ result }: { result: FinishResult }) {
   const free = result.mode === "free";
   const replay = result.mode === "archive";
+  const hideSpoilers = useSpoilersHidden();
   const depth = useRollUp(result.totalSouls);
   return (
     <section className="ledger" aria-labelledby="ledger-title">
@@ -127,6 +129,11 @@ export function Ledger({ result }: { result: FinishResult }) {
 
       <Constellation result={result} />
 
+      {hideSpoilers ? (
+        <p className="ledger-spoilers">
+          Streamer mode: the crowd’s answers and Rejuvenators are hidden.
+        </p>
+      ) : null}
       <ol className="ledger-rounds">
         {result.rounds.map((r, i) => {
           const v = tierView(r.tier);
@@ -152,7 +159,7 @@ export function Ledger({ result }: { result: FinishResult }) {
                   "No answer"
                 )}
               </p>
-              {r.crowd.length > 0 ? (
+              {hideSpoilers ? null : r.crowd.length > 0 ? (
                 <p className="row-crowd">
                   The crowd said:{" "}
                   {r.crowd.map((c, j) => (
@@ -163,7 +170,7 @@ export function Ledger({ result }: { result: FinishResult }) {
                   ))}
                 </p>
               ) : null}
-              {r.rejuvenator ? (
+              {!hideSpoilers && r.rejuvenator ? (
                 <p className="row-rejuv">
                   💠 Rejuvenator: <strong>{r.rejuvenator}</strong>
                 </p>
