@@ -1,7 +1,7 @@
 import { TIERS, VERDICTS, ZONES, type Tier } from "@urnrun/core";
 import { Link } from "react-router";
-import { ContentPage } from "../content/ContentPage";
-import { pageMeta } from "../content/site";
+import { ContentPage } from "../site/ContentPage";
+import { pageMeta } from "../site/site";
 
 export const meta = () =>
   pageMeta(

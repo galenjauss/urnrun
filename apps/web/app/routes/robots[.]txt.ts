@@ -1,4 +1,4 @@
-import { SITE } from "../content/site";
+import { SITE } from "../site/site";
 
 export function loader() {
   const body = [

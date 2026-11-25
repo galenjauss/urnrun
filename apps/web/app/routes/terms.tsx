@@ -1,5 +1,5 @@
-import { ContentPage } from "../content/ContentPage";
-import { DISCLAIMER, SITE, pageMeta } from "../content/site";
+import { ContentPage } from "../site/ContentPage";
+import { DISCLAIMER, SITE, pageMeta } from "../site/site";
 
 export const meta = () =>
   pageMeta(

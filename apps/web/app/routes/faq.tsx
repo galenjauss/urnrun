@@ -1,6 +1,6 @@
 import { Link } from "react-router";
-import { ContentPage } from "../content/ContentPage";
-import { SITE, pageMeta } from "../content/site";
+import { ContentPage } from "../site/ContentPage";
+import { SITE, pageMeta } from "../site/site";
 
 export const meta = () =>
   pageMeta(

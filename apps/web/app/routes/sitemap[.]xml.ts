@@ -1,4 +1,4 @@
-import { CONTENT_PATHS, SITE } from "../content/site";
+import { CONTENT_PATHS, SITE } from "../site/site";
 
 export function loader() {
   const urls = CONTENT_PATHS.map((p) => `  <url><loc>${SITE.origin}${p}</loc></url>`).join("\n");
