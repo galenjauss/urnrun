@@ -2,6 +2,7 @@ import { ZONES, zoneFor } from "@urnrun/core";
 import { useEffect, useRef, useState } from "react";
 import { audio } from "../audio/engine";
 import type { ScenePulse } from "../scene/Scene";
+import { chainAt } from "./chain";
 import { totalSouls, type DiveState } from "./machine";
 
 export interface Arrival {
@@ -49,7 +50,7 @@ export function useDiveFx(
     const tier = revealSlot.status === "answered" ? revealSlot.tier : null;
     seq.current += 1;
     setPulse({ seq: seq.current, tier });
-    audio.tier(tier);
+    audio.tier(tier, lastIdx !== null ? chainAt(slots, lastIdx) : 0);
     // One beat per reveal of a given round.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, lastIdx]);

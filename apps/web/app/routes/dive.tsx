@@ -9,6 +9,7 @@ import { SoundToggle } from "../game/components/SoundToggle";
 import { Timer } from "../game/components/Timer";
 import { UrnMeter } from "../game/components/UrnMeter";
 import { ZoneBanner } from "../game/components/ZoneBanner";
+import { chainAt } from "../game/chain";
 import { totalSouls } from "../game/machine";
 import { useDive } from "../game/useDive";
 import { useDiveFx } from "../game/useDiveFx";
@@ -101,13 +102,19 @@ export default function Dive() {
             />
           </>
         ) : null}
-        {phase === "reveal" && lastSlot ? <RevealStamp slot={lastSlot} /> : null}
+        {phase === "reveal" && lastSlot ? (
+          <RevealStamp slot={lastSlot} chain={chainAt(slots, lastIdx ?? 0)} />
+        ) : null}
         {phase === "ledger" && ledger ? <Ledger result={ledger} /> : null}
       </div>
 
       {inRound ? (
         <footer className="dive-bottom">
-          <UrnMeter total={totalSouls(slots)} slots={slots} />
+          <UrnMeter
+            total={totalSouls(slots)}
+            slots={slots}
+            coughSeq={pulse?.tier === "wise_guy" ? pulse.seq : null}
+          />
           <GuessDock
             key={current?.idx ?? -1}
             enabled={phase === "answering"}

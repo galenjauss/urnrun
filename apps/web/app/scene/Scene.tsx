@@ -1,5 +1,6 @@
 import type { Tier } from "@urnrun/core";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
+import { getPrefs, subscribePrefs } from "../game/prefs";
 import type { Quality } from "./quality";
 import { SceneRenderer, type SceneInputs } from "./renderer";
 
@@ -44,10 +45,16 @@ export function Scene({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererRef = useRef<SceneRenderer | null>(null);
   const inputs = useRef<SceneInputs>({ depth, urgent, reducedMotion: false, urn: null });
+  const lowPower = useSyncExternalStore(
+    subscribePrefs,
+    () => getPrefs().lowPower,
+    () => false,
+  );
   useEffect(() => {
     inputs.current.depth = depth;
     inputs.current.urgent = urgent;
-  }, [depth, urgent]);
+    inputs.current.lowPower = lowPower;
+  }, [depth, urgent, lowPower]);
 
   useEffect(() => {
     const canvas = canvasRef.current;

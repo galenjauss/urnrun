@@ -196,7 +196,7 @@
   stroke-width: 1.8;
   stroke-linecap: round;
 }
-.sound-toggle[aria-pressed="false"] {
+.sound-toggle[data-muted] {
   color: var(--soot-700);
 }
 
@@ -847,4 +847,109 @@
   .row-glyph {
     animation: none;
   }
+}
+
+/* ── Urn: Wise Guy cough + overflow ──────────────────── */
+.urn-meter {
+  position: relative;
+}
+.urn-smoke {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  pointer-events: none;
+}
+.urn-smoke i {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border-radius: 50%;
+  background: radial-gradient(circle, oklch(70% 0.03 320 / 0.75), transparent 70%);
+  animation: urn-cough 1100ms var(--ease-out-expo) both;
+}
+.urn-smoke i:nth-child(2) {
+  animation-delay: 90ms;
+  --dx: -10px;
+}
+.urn-smoke i:nth-child(3) {
+  animation-delay: 180ms;
+  --dx: 9px;
+}
+@keyframes urn-cough {
+  from {
+    opacity: 0.9;
+    transform: translate(0, 0) scale(0.4);
+  }
+  to {
+    opacity: 0;
+    transform: translate(var(--dx, 0), -34px) scale(2.2);
+  }
+}
+.urn-meter.is-overflowing svg {
+  animation: urn-overflow 1.8s ease-in-out infinite;
+}
+@keyframes urn-overflow {
+  50% {
+    filter: drop-shadow(0 0 10px var(--soul-400)) drop-shadow(0 0 22px var(--gold-400));
+  }
+}
+.reveal-chain {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  color: var(--soul-400);
+  text-shadow: 0 0 14px oklch(84% 0.13 175 / 0.6);
+  animation: rise 420ms 160ms var(--ease-out-expo) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .urn-smoke i,
+  .urn-meter.is-overflowing svg,
+  .reveal-chain {
+    animation: none;
+  }
+  .urn-smoke {
+    display: none;
+  }
+}
+
+/* ── Settings mixer ──────────────────────────────────── */
+.settings {
+  position: relative;
+  flex: none;
+}
+.settings-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 20;
+  display: grid;
+  gap: 10px;
+  min-width: 210px;
+  padding: 14px 16px;
+  border: 1px solid oklch(66% 0.09 75 / 0.55);
+  background: oklch(13% 0.01 250 / 0.96);
+  box-shadow: 0 18px 40px oklch(0% 0 0 / 0.5);
+  animation: rise 220ms var(--ease-out-expo) both;
+}
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: var(--parchment-100);
+}
+.settings-slider {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+}
+.settings-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--soul-400);
+}
+.settings-row input[type="range"] {
+  width: 100%;
+  accent-color: var(--gold-400);
 }

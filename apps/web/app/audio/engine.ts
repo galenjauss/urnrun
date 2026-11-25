@@ -18,6 +18,8 @@ class AudioEngine {
   private stopBed: ((fadeS?: number) => void) | null = null;
   private noiseBuf: AudioBuffer | null = null;
   settings: AudioSettings = { muted: false, sfx: 0.8, music: 0.4 };
+  /** Pitch multiplier applied to every tone (chains climb). */
+  private pitch = 1;
   private listeners = new Set<(s: AudioSettings) => void>();
   private loaded = false;
 
@@ -136,8 +138,8 @@ class AudioEngine {
     const ctx = this.ctx!;
     const osc = ctx.createOscillator();
     osc.type = wave;
-    osc.frequency.setValueAtTime(freq, at);
-    if (opts.to) osc.frequency.exponentialRampToValueAtTime(opts.to, at + dur);
+    osc.frequency.setValueAtTime(freq * this.pitch, at);
+    if (opts.to) osc.frequency.exponentialRampToValueAtTime(opts.to * this.pitch, at + dur);
     const g = ctx.createGain();
     const attack = opts.attack ?? 0.005;
     g.gain.setValueAtTime(0.0001, at);
@@ -175,10 +177,19 @@ class AudioEngine {
 
   // ── voices ───────────────────────────────────────────────────
 
-  /** Reveal voice per tier (SPEC §3.3). `null` is a miss. */
-  tier(tier: Tier | null): void {
+  /** Reveal voice per tier (SPEC §3.3). `null` is a miss. A chain (≥2) climbs a whole tone per link. */
+  tier(tier: Tier | null, chain = 0): void {
     const ctx = this.ready();
     if (!ctx) return;
+    this.pitch = chain >= 2 ? Math.pow(2, (Math.min(chain, 7) - 1) / 6) : 1;
+    try {
+      this.voice(ctx, tier);
+    } finally {
+      this.pitch = 1;
+    }
+  }
+
+  private voice(ctx: AudioContext, tier: Tier | null): void {
     const t = ctx.currentTime + 0.01;
     switch (tier) {
       case null: // muted thud
