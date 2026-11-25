@@ -5,15 +5,24 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useRouteLoaderData,
 } from "react-router";
 
 import type { Route } from "./+types/root";
+import { nonceContext } from "./security";
 // Self-hosted, subset fonts (no third-party font requests).
 import "@fontsource/limelight/latin-400.css";
 import "@fontsource-variable/jost/wght.css";
 import "./styles/global.css";
 
+/** Hands the per-request CSP nonce to <Scripts>; never re-fetched on client navigation. */
+export function loader({ context }: Route.LoaderArgs) {
+  return { nonce: context.get(nonceContext) };
+}
+export const shouldRevalidate = () => false;
+
 export function Layout({ children }: { children: React.ReactNode }) {
+  const nonce = useRouteLoaderData<typeof loader>("root")?.nonce;
   return (
     <html lang="en">
       <head>
@@ -25,8 +34,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
-        <ScrollRestoration />
-        <Scripts />
+        <ScrollRestoration nonce={nonce} />
+        <Scripts nonce={nonce} />
       </body>
     </html>
   );
