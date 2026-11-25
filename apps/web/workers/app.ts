@@ -1,4 +1,5 @@
-import { createRequestHandler } from "react-router";
+import { RouterContextProvider, createRequestHandler } from "react-router";
+import { cloudflareContext } from "../app/cloudflare";
 import { createApi } from "./api";
 import { recomputeRarity } from "./game/rarity-job";
 
@@ -15,7 +16,9 @@ export default {
     if (pathname === "/api" || pathname.startsWith("/api/")) {
       return api.fetch(request, env, ctx);
     }
-    return requestHandler(request);
+    const context = new RouterContextProvider();
+    context.set(cloudflareContext, { env, ctx });
+    return requestHandler(request, context);
   },
   async scheduled(_controller, env, ctx) {
     ctx.waitUntil(

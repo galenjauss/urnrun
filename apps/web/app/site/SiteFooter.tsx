@@ -6,6 +6,7 @@ export function SiteFooter() {
     <footer className="site-footer">
       <nav aria-label="Site">
         <Link to="/how-to-play">How to play</Link>
+        <Link to="/ledger">Past dives</Link>
         <Link to="/faq">FAQ</Link>
         <Link to="/about">About</Link>
         <Link to="/privacy">Privacy</Link>

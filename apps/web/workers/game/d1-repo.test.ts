@@ -114,6 +114,8 @@ describe("D1 repo", () => {
     await repo.finishRun("r1", 9999, "hearth", 600); // ignored: already finished
     expect(await repo.getRun("r1")).toMatchObject({ totalSouls: 100, finishedAt: 500 });
     expect(await repo.percentileFor(3, 150)).toEqual({ below: 1, players: 1 });
+    expect(await repo.dayStats(3)).toEqual({ players: 1, avgSouls: 100, bestSouls: 100 });
+    expect(await repo.dayStats(42)).toEqual({ players: 0, avgSouls: 0, bestSouls: 0 });
   });
 
   it("bumps streaks idempotently per day", async () => {

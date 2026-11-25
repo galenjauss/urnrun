@@ -249,6 +249,29 @@ export function createD1Repo(db: D1Database, clock: () => number = Date.now): Ga
       return { below: row?.below ?? 0, players: row?.players ?? 0 };
     },
 
+    async pastDays(before, limit) {
+      const { results } = await db
+        .prepare(`SELECT day FROM daily_schedule WHERE day < ? ORDER BY day DESC LIMIT ?`)
+        .bind(before, limit)
+        .all<{ day: number }>();
+      return results.map((r) => r.day);
+    },
+
+    async dayStats(day) {
+      const row = await db
+        .prepare(
+          `SELECT COUNT(*) AS players, COALESCE(AVG(total_souls), 0) AS avg, COALESCE(MAX(total_souls), 0) AS best
+           FROM runs WHERE mode = 'daily' AND day = ? AND finished_at IS NOT NULL AND flagged = 0`,
+        )
+        .bind(day)
+        .first<{ players: number; avg: number; best: number }>();
+      return {
+        players: row?.players ?? 0,
+        avgSouls: Math.round(row?.avg ?? 0),
+        bestSouls: row?.best ?? 0,
+      };
+    },
+
     async crowdAnswers(day, promptId): Promise<CrowdAnswer[]> {
       const { results } = await db
         .prepare(
