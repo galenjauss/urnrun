@@ -33,6 +33,11 @@
       "simple": { "limit": 120, "period": 60 },
     },
   ],
+  // Séance lobbies: one SQLite-backed Durable Object per room (WebSocket Hibernation).
+  "durable_objects": {
+    "bindings": [{ "name": "LOBBY", "class_name": "LobbyRoom" }],
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["LobbyRoom"] }],
   "kv_namespaces": [
     {
       "binding": "CACHE",

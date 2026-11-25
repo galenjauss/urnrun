@@ -5,6 +5,8 @@ import { createApi } from "./api";
 import { recomputeRarity } from "./game/rarity-job";
 import { CARD_PNG, handleCardPng } from "./og/handler";
 
+export { LobbyRoom } from "./lobby/room";
+
 const requestHandler = createRequestHandler(
   () => import("virtual:react-router/server-build"),
   import.meta.env.MODE,
