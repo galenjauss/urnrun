@@ -13,7 +13,8 @@ import {
   type Tier,
 } from "@urnrun/core";
 import { hmac, randomId, verifyHmac } from "../lib/crypto";
-import type { GameRepo, PlayablePrompt, RoundRow, RunRow } from "./types";
+import { LOOKAHEAD_DAYS, freePool, pickFreePrompts } from "./free-pool";
+import type { GameRepo, Mode, PlayablePrompt, RoundRow, RunRow } from "./types";
 
 /** Server-authoritative Daily Dive loop (SPEC §3.2, §6.4–6.5). */
 
@@ -83,6 +84,7 @@ export interface RoundReveal {
 }
 
 export interface FinishResult {
+  mode: Mode;
   day: number | null;
   totalSouls: number;
   zone: string;
@@ -184,6 +186,42 @@ export function createGameService({ repo, secret, now, shareUrl }: GameServiceDe
       if (!winner) throw err;
       return startResult(winner);
     }
+    return startResult(run);
+  }
+
+  /**
+   * Free Dive (SPEC §3.8): unlocked once today's Daily is finished (or when none is scheduled).
+   * Seven random prompts that can't spoil an upcoming Daily; no streak, tallies or percentile.
+   */
+  async function startFree(userId: string, rand: () => number = Math.random): Promise<StartResult> {
+    const day = dayNumber(new Date(now()));
+    await repo.ensureUser(userId, now());
+    if (await repo.getScheduledPromptIds(day)) {
+      const daily = await repo.findDailyRun(userId, day);
+      if (!daily || daily.finishedAt === null) {
+        throw new GameError("daily_first", 403, "Finish today's dive to unlock Free Dive");
+      }
+    }
+    const [bank, upcoming, revealed] = await Promise.all([
+      repo.activePrompts(),
+      repo.scheduledPromptIdsBetween(day, day + LOOKAHEAD_DAYS),
+      repo.scheduledPromptIdsBetween(day - 10_000, day - 1),
+    ]);
+    const promptIds = pickFreePrompts(freePool(bank, new Set(upcoming), new Set(revealed)), rand);
+    if (!promptIds) {
+      throw new GameError("no_free", 404, "Free Dive opens once the archive has grown");
+    }
+    const run: RunRow = {
+      id: randomId(),
+      userId,
+      mode: "free",
+      day: null,
+      promptIds,
+      startedAt: now(),
+      finishedAt: null,
+      totalSouls: 0,
+    };
+    await repo.createRun(run);
     return startResult(run);
   }
 
@@ -354,6 +392,7 @@ export function createGameService({ repo, secret, now, shareUrl }: GameServiceDe
     }
 
     return {
+      mode: run.mode,
       day: run.day,
       totalSouls: total,
       zone: zone.name,
@@ -363,6 +402,7 @@ export function createGameService({ repo, secret, now, shareUrl }: GameServiceDe
       rounds: await reveal(run, rounds),
       share: buildShareText({
         day: run.day ?? 0,
+        label: run.mode === "free" ? "Free Dive" : undefined,
         tiers: rounds.map((r) => r.tier),
         percentile,
         url:
@@ -393,7 +433,7 @@ export function createGameService({ repo, secret, now, shareUrl }: GameServiceDe
     };
   }
 
-  return { startDaily, serveRound, guess, expireRound, finish, today };
+  return { startDaily, startFree, serveRound, guess, expireRound, finish, today };
 }
 
 export type GameService = ReturnType<typeof createGameService>;

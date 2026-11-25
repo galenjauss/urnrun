@@ -8,6 +8,8 @@ export interface ShareInput {
   percentile: number | null;
   url: string;
   variant?: "emoji" | "bars";
+  /** Overrides the "#12" / "Beta" label (e.g. "Free Dive"). */
+  label?: string;
 }
 
 const formatter = new Intl.NumberFormat("en-US");
@@ -18,6 +20,7 @@ export function buildShareText({
   percentile,
   url,
   variant = "emoji",
+  label: labelOverride,
 }: ShareInput): string {
   const total = tiers.reduce((sum, t) => sum + soulsFor(t), 0);
   const row = tiers
@@ -27,7 +30,7 @@ export function buildShareText({
         : MISS[variant === "bars" ? "bar" : "glyph"],
     )
     .join("");
-  const label = day >= 1 ? `#${day}` : "Beta";
+  const label = labelOverride ?? (day >= 1 ? `#${day}` : "Beta");
   const lines = [`Urn Run ${label} · ${formatter.format(total)} ft · ${zoneFor(total).name}`, row];
   if (percentile !== null) {
     const pct = Math.min(100, Math.max(0, Math.round(percentile)));

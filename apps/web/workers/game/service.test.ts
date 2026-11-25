@@ -195,8 +195,8 @@ describe("expireRound", () => {
   });
 });
 
-async function playAll(user: string, answers: (string | null)[]) {
-  const s = await svc().startDaily(user);
+async function playAll(user: string, answers: (string | null)[], mode: "daily" | "free" = "daily") {
+  const s = mode === "free" ? await svc().startFree(user) : await svc().startDaily(user);
   for (let i = 0; i < 7; i++) {
     await svc().serveRound(user, s.runId, s.token, i);
     now += PREVIEW_MS;
@@ -265,6 +265,52 @@ describe("finish", () => {
     }
     const res = await svc().finish("u1", s.runId, s.token);
     expect(res.totalSouls).toBe(0);
+  });
+});
+
+describe("free dive", () => {
+  const addBank = (n: number) => {
+    for (let i = 7; i < 7 + n; i++) repo.prompts.set(`p${i}`, { ...prompt(i), id: `p${i}` });
+  };
+
+  it("unlocks only after today's daily is finished", async () => {
+    addBank(7);
+    await expectCode(svc().startFree("u1"), "daily_first");
+    const d = await playAll("u1", ["Seven", "Seven", "Seven", "Seven", "Seven", "Seven", "Seven"]);
+    await expectCode(svc().startFree("u1"), "daily_first");
+    await svc().finish("u1", d.runId, d.token);
+    const f = await svc().startFree("u1");
+    expect(f.totalRounds).toBe(7);
+  });
+
+  it("never serves an upcoming daily prompt", async () => {
+    addBank(7);
+    const d = await playAll("u1", ["Seven", "Seven", "Seven", "Seven", "Seven", "Seven", "Seven"]);
+    await svc().finish("u1", d.runId, d.token);
+    const f = await svc().startFree("u1");
+    const run = await repo.getRun(f.runId);
+    expect(run!.mode).toBe("free");
+    expect(run!.day).toBeNull();
+    expect(run!.promptIds.every((id) => Number(id.slice(1)) >= 7)).toBe(true);
+  });
+
+  it("refuses when only upcoming dailies are left", async () => {
+    const d = await playAll("u1", ["Seven", "Seven", "Seven", "Seven", "Seven", "Seven", "Seven"]);
+    await svc().finish("u1", d.runId, d.token);
+    await expectCode(svc().startFree("u1"), "no_free");
+  });
+
+  it("scores without streak, percentile or crowd tallies", async () => {
+    addBank(7);
+    const d = await playAll("u1", ["Seven", "Seven", "Seven", "Seven", "Seven", "Seven", "Seven"]);
+    await svc().finish("u1", d.runId, d.token);
+    const talliesBefore = repo.tallies.size;
+    const f = await playAll("u1", ["Paradox", null, null, null, null, null, null], "free");
+    const res = await svc().finish("u1", f.runId, f.token);
+    expect(res).toMatchObject({ mode: "free", day: null, percentile: null, streak: null });
+    expect(res.totalSouls).toBe(1000);
+    expect(res.share.startsWith("Urn Run Free Dive · 1,000 ft")).toBe(true);
+    expect(repo.tallies.size).toBe(talliesBefore);
   });
 });
 

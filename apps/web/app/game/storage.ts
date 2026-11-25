@@ -73,3 +73,15 @@ export function recordResult(day: number, total: number): LocalStats {
   write(STATS_KEY, JSON.stringify(next));
   return next;
 }
+
+const FREE_BEST_KEY = "urnrun:freebest:v1";
+
+/** Free Dive personal best (separate from the Daily, SPEC §3.8). Returns the best after folding in. */
+export function recordFreeBest(total: number): number {
+  const prev = Number(read(FREE_BEST_KEY)) || 0;
+  const best = Math.max(prev, total);
+  if (best !== prev) write(FREE_BEST_KEY, String(best));
+  return best;
+}
+
+export const loadFreeBest = (): number => Number(read(FREE_BEST_KEY)) || 0;

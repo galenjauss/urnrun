@@ -1,6 +1,8 @@
 import { nextResetAt } from "@urnrun/core";
 import { useState } from "react";
 import type { FinishResult } from "../api";
+import { Link } from "react-router";
+import { loadFreeBest } from "../storage";
 import { useNow } from "../useNow";
 import { useRollUp } from "../useRollUp";
 import { Constellation } from "./Constellation";
@@ -54,20 +56,43 @@ function percentileLine(r: FinishResult): string {
 }
 
 /** THE LEDGER — results, per-round crowd reveal, share. */
+function NextDive({ free }: { free: boolean }) {
+  const [best] = useState(() => (free ? loadFreeBest() : 0));
+  return (
+    <div className="ledger-next">
+      {free && best > 0 ? (
+        <p className="ledger-free-best">Free Dive best: {formatFt(best)}</p>
+      ) : null}
+      <Link className="cta" to="/dive?mode=free">
+        {free ? "Dive again" : "Free Dive →"}
+      </Link>
+      {free ? null : (
+        <p className="ledger-next-note">Endless practice dives. No effect on your streak.</p>
+      )}
+    </div>
+  );
+}
+
 export function Ledger({ result }: { result: FinishResult }) {
+  const free = result.mode === "free";
   const depth = useRollUp(result.totalSouls);
   return (
     <section className="ledger" aria-labelledby="ledger-title">
       <header className="ledger-head">
         <p className="ledger-kicker">
-          The Ledger{result.day !== null && result.day >= 1 ? ` · #${result.day}` : " · Beta"}
+          The Ledger
+          {free
+            ? " · Free Dive"
+            : result.day !== null && result.day >= 1
+              ? ` · #${result.day}`
+              : " · Beta"}
         </p>
         <h2 id="ledger-title" className="ledger-depth" aria-label={formatFt(result.totalSouls)}>
           <span aria-hidden="true">{formatFt(depth)}</span>
         </h2>
         <p className="ledger-zone">{result.zone}</p>
         <p className="ledger-verdict">{result.verdict}</p>
-        <p className="ledger-pct">{percentileLine(result)}</p>
+        {free ? null : <p className="ledger-pct">{percentileLine(result)}</p>}
         {result.streak ? (
           <p className="ledger-streak">
             Streak {result.streak.current} · best {result.streak.best}
@@ -129,6 +154,7 @@ export function Ledger({ result }: { result: FinishResult }) {
         </pre>
         <ShareButton text={result.share} />
       </div>
+      <NextDive free={free} />
       <Countdown />
     </section>
   );

@@ -55,6 +55,19 @@ describe("share label", () => {
   });
 });
 
+describe("share label override", () => {
+  it("can label a Free Dive", () => {
+    const text = buildShareText({
+      day: 0,
+      tiers: ["rejuvenator", null, null, null, null, null, null],
+      percentile: null,
+      url: "https://x.test",
+      label: "Free Dive",
+    });
+    expect(text.startsWith("Urn Run Free Dive · 1,000 ft")).toBe(true);
+  });
+});
+
 describe("share code", () => {
   const tiers = [
     "trooper",

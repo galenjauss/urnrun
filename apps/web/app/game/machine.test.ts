@@ -142,6 +142,7 @@ describe("diveReducer", () => {
 
   it("handles finish, closed and failure", () => {
     const ledger = {
+      mode: "daily" as const,
       day: 3,
       totalSouls: 0,
       zone: "The Curb",

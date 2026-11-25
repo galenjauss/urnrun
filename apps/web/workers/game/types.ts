@@ -72,6 +72,10 @@ export interface GameRepo {
   finishRun(runId: string, total: number, zone: string, now: number): Promise<void>;
   percentileFor(day: number, total: number): Promise<{ below: number; players: number }>;
   crowdAnswers(day: number, promptId: string): Promise<CrowdAnswer[]>;
+  /** Active prompt ids with their category (the Free Dive bank). */
+  activePrompts(): Promise<{ id: string; category: string }[]>;
+  /** Prompt ids scheduled on any day in [from, to]. */
+  scheduledPromptIdsBetween(from: number, to: number): Promise<string[]>;
   /** Scheduled days strictly before `before`, newest first. */
   pastDays(before: number, limit: number): Promise<number[]>;
   /** Finished, unflagged daily runs for a day: player count, mean and best total. */
