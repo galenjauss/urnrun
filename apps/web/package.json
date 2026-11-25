@@ -10,7 +10,9 @@
     "deploy": "pnpm run build && wrangler deploy",
     "preview": "pnpm run build && vite preview",
     "cf-typegen": "wrangler types",
-    "postinstall": "wrangler types"
+    "postinstall": "wrangler types",
+    "e2e:setup": "wrangler d1 migrations apply urnrun-db --local && node e2e/seed.mjs > .wrangler/e2e-seed.sql && wrangler d1 execute urnrun-db --local --file .wrangler/e2e-seed.sql",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@fontsource-variable/jost": "^5.2.8",
@@ -26,6 +28,7 @@
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.70.2",
+    "@playwright/test": "1.49.1",
     "@react-router/dev": "^8.5.2",
     "@types/node": "^22",
     "@types/react": "^19.3.0",
